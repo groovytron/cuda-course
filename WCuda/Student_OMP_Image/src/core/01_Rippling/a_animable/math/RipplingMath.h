@@ -59,6 +59,7 @@ class RipplingMath
 	    {
 	    // TODO cf fonction math pdf
 	    // use focntion dij ci-dessous
+	    *ptrlevelGris = 128;
 	    }
 
 	void dij(int i, int j, float* ptrResult)

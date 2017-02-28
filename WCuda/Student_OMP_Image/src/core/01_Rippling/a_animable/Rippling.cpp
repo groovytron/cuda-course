@@ -1,11 +1,18 @@
-#include "RipplingMath.h"
 #include "Rippling.h"
 
-#include <iostream>
+#include <IndiceTools_CPU.h>
 #include <omp.h>
-#include "OmpTools.h"
+#include <OmpTools.h>
+#include <ParallelPatern.h>
+#include <iostream>
 
-#include "IndiceTools_CPU.h"
+#include "math/RipplingMath.h"
+
+namespace cpu
+    {
+    class IndiceTools;
+    } /* namespace cpu */
+
 using cpu::IndiceTools;
 
 using std::cout;
@@ -72,7 +79,17 @@ void Rippling::animationStep()
  */
 void Rippling::processForAutoOMP(uchar4* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath)
     {
-   // TODO
+    RipplingMath ripplingMath(w);
+
+#pragma omp parallel for
+    for (int i = 0; i < h; i++)
+	{
+	for (int j = 0; j < w; j++)
+	    {
+	    int s = IndiceTools::toS(w, i, j);
+	    ripplingMath.colorIJ(&ptrTabPixels[s], i, j, t);
+	    }
+	}
     }
 
 /**
@@ -81,7 +98,28 @@ void Rippling::processForAutoOMP(uchar4* ptrTabPixels, uint w, uint h, const Dom
  */
 void Rippling::processEntrelacementOMP(uchar4* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath)
     {
-   //TODO
+    const int WH = w * h;
+
+//    RipplingMath ripplingMath = RipplingMath(w); // v1
+
+    RipplingMath ripplingMath(w); // v2
+
+#pragma omp parallel
+	{
+	const int NB_THREAD = OmpTools::getNbThread();
+	const int TID = OmpTools::getTid();
+	int s = TID;
+	int i;
+	int j;
+
+	while (s < WH)
+	    {
+	    IndiceTools::toIJ(s, w, &i, &j);
+	    ripplingMath.colorIJ(&ptrTabPixels[s], i, j, t);
+
+	    s += NB_THREAD;
+	    }
+	}
     }
 
 /*----------------------------------------------------------------------*\
