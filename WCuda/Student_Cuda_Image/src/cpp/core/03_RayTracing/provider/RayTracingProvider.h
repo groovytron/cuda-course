@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Animable_I_CPU.h"
-#include "Provider_I_CPU.h"
+#include "cudaTools.h"
 
-using namespace cpu;
+#include "Provider_I_GPU.h"
+using namespace gpu;
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -12,6 +12,7 @@ using namespace cpu;
 /*--------------------------------------*\
  |*		Public			*|
  \*-------------------------------------*/
+
 
 class RayTracingProvider: public Provider_I<uchar4>
     {
@@ -26,13 +27,11 @@ class RayTracingProvider: public Provider_I<uchar4>
 	 |*		Override		*|
 	 \*-------------------------------------*/
 
-	Animable_I<uchar4>* createAnimable(void);
+	virtual Animable_I<uchar4>* createAnimable(void);
 
-	Image_I* createImageGL(void);
+	virtual Image_I* createImageGL(void);
 
     };
-
-
 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|

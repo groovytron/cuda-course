@@ -1,11 +1,16 @@
-#include "MandelbrotProvider.h"
-#include "Mandelbrot.h"
+#include "Indice2D.h"
+#include "cudaTools.h"
+#include "Device.h"
 
-#include "MathTools.h"
+#include "IndiceTools_GPU.h"
 
-#include "ImageAnimable_CPU.h"
-#include "DomaineMath_CPU.h"
-using namespace cpu;
+#include "RayTracingMath.h"
+using namespace gpu;
+
+// Attention : 	Choix du nom est impotant!
+//		VagueDevice.cu et non Vague.cu
+// 		Dans ce dernier cas, probl�me de linkage, car le nom du .cu est le meme que le nom d'un .cpp (host)
+//		On a donc ajouter Device (ou n'importequoi) pour que les noms soient diff�rents!
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -19,6 +24,8 @@ using namespace cpu;
  |*		Public			*|
  \*-------------------------------------*/
 
+__global__ void raytracing(uchar4* ptrDevPixels, uint w, uint h, float t);
+
 /*--------------------------------------*\
  |*		Private			*|
  \*-------------------------------------*/
@@ -31,34 +38,23 @@ using namespace cpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-/*--------------------------------------*\
- |*		Surcharge		*|
- \*-------------------------------------*/
-
-/**
- * Override
- */
-Animable_I<uchar4>* MandelbrotProvider::createAnimable(void)
+__global__ void raytracing(uchar4* ptrDevPixels, uint w, uint h, float t)
     {
-    DomaineMath domaineMath = DomaineMath(-2.1, -1.3, 0.8, 1.3);
+    RayTracingMath rayTracingMath = RayTracingMath(w, h);
 
-    // Animation;
-    const int N = 120;
+    const int TID = Indice2D::tid();
+    const int NB_THREAD = Indice2D::nbThread();
+    const int WH = w * h;
 
-    // Dimension
-    int dw = 16 * 60;
-    int dh = 16 * 60;
-
-    return new Mandelbrot(dw, dh, N, domaineMath);
-    }
-
-/**
- * Override
- */
-Image_I* MandelbrotProvider::createImageGL(void)
-    {
-    ColorRGB_01 colorTexte(0, 0, 0); // black
-    return new ImageAnimable_RGBA_uchar4(createAnimable(), colorTexte);
+    int s = TID;
+    int i = 0;
+    int j = 0;
+    while (s < WH)
+	{
+	IndiceTools::toIJ(s, w, &i, &j);
+	rayTracingMath.colorIJ(&ptrDevPixels[s], i, j, t);
+	s += NB_THREAD;
+	}
     }
 
 /*--------------------------------------*\
@@ -68,3 +64,4 @@ Image_I* MandelbrotProvider::createImageGL(void)
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
  \*---------------------------------------------------------------------*/
+

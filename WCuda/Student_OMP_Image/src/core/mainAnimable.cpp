@@ -69,7 +69,7 @@ void rippling()
     {
     const int NB_ITERATION = 1000;
 
-    RipplingProvider provider;
+    RayTracingProvider provider;
     animer<uchar4>(&provider, NB_ITERATION);
     }
 

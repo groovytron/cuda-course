@@ -71,7 +71,7 @@ int mainImage(Settings& settings)
 //    Viewer<DomaineProvider> domaineProvider(zoomable, 200, 200);		//  imageOption px py
 
     // setSize of frame, size of image  don't change, a texture work for you to adapt the image to the size of the frame
-    overlayProvider.setSize(600,600);
+//    overlayProvider.setSize(600,600);
 
     // Custom : Advanced
      Displayable_A* ptrMyDisplayable = MyDisplayableProvider::createGL();

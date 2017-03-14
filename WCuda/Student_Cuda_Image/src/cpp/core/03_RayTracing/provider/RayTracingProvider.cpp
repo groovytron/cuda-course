@@ -1,11 +1,8 @@
-#include "MandelbrotProvider.h"
-#include "Mandelbrot.h"
+#include "RayTracingProvider.h"
+#include "RayTracing.h"
 
 #include "MathTools.h"
-
-#include "ImageAnimable_CPU.h"
-#include "DomaineMath_CPU.h"
-using namespace cpu;
+#include "Grid.h"
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -31,33 +28,35 @@ using namespace cpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-/*--------------------------------------*\
- |*		Surcharge		*|
- \*-------------------------------------*/
-
 /**
  * Override
  */
-Animable_I<uchar4>* MandelbrotProvider::createAnimable(void)
+Animable_I<uchar4>* RayTracingProvider::createAnimable()
     {
-    DomaineMath domaineMath = DomaineMath(-2.1, -1.3, 0.8, 1.3);
-
     // Animation;
-    const int N = 120;
+    float dt = 2 * PI / 10;
 
     // Dimension
     int dw = 16 * 60;
     int dh = 16 * 60;
 
-    return new Mandelbrot(dw, dh, N, domaineMath);
+    // Grid Cuda
+    int mp = Device::getMPCount();
+    int coreMP = Device::getCoreCountMP();
+
+    dim3 dg = dim3(46, 2, 1);  		// disons, a optimiser selon le gpu, peut drastiqument ameliorer ou baisser les performances
+    dim3 db = dim3(448, 2, 1);
+    Grid grid(dg, db);  // TODO definissez une grille cuda (dg, db)
+
+    return new RayTracing(grid, dw, dh, dt);
     }
 
 /**
  * Override
  */
-Image_I* MandelbrotProvider::createImageGL(void)
+Image_I* RayTracingProvider::createImageGL(void)
     {
-    ColorRGB_01 colorTexte(0, 0, 0); // black
+    ColorRGB_01 colorTexte(0, 1, 0); // Green
     return new ImageAnimable_RGBA_uchar4(createAnimable(), colorTexte);
     }
 

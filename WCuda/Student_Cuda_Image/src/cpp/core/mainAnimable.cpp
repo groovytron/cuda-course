@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "RipplingProvider.h"
+#include "RayTracingProvider.h"
 
 #include "Animateur_GPU.h"
 #include "Settings_GPU.h"
@@ -29,6 +30,7 @@ int mainAnimable(Settings& settings);
  \*-------------------------------------*/
 
 static void rippling();
+static void raytracing();
 
 // Tools
 template<typename T>
@@ -48,7 +50,8 @@ int mainAnimable(Settings& settings)
 
     // Attention : pas tous a la fois
 
-    rippling();
+//    rippling();
+    raytracing();
     // mandelbrot();
 
     cout << "\n[Animable] end" << endl;
@@ -65,7 +68,15 @@ void rippling()
     const int NB_ITERATION = 50000;
 
     RipplingProvider provider;
-    animer<uchar4>(&provider,NB_ITERATION);
+    animer<uchar4>(&provider, NB_ITERATION);
+    }
+
+void raytracing()
+    {
+    const int NB_ITERATION = 50000;
+
+    RayTracingProvider provider;
+    animer<uchar4>(&provider, NB_ITERATION);
     }
 
 /*-----------------------------------*\

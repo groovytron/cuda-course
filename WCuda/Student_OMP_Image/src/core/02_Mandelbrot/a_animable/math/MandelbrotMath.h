@@ -1,9 +1,13 @@
 #pragma once
 
+#include <cudaType_CPU.h>
+#include <Calibreur_CPU.h>
+#include <ColorTools_CPU.h>
+#include <Interval_CPU.h>
 #include <math.h>
-#include "MathTools.h"
 
-#include "ColorTools_CPU.h"
+#include <stdio.h>
+
 using namespace cpu;
 
 /*----------------------------------------------------------------------*\
@@ -16,83 +20,90 @@ using namespace cpu;
 
 class MandelbrotMath
     {
+
 	/*--------------------------------------*\
-	|*		Constructeur		*|
+	|*		Constructor		*|
 	 \*-------------------------------------*/
 
     public:
 
-	MandelbrotMath(uint w)
+	MandelbrotMath(uint n) :
+		calibreur(Interval<float>(0, n), Interval<float>(0, 1))
 	    {
-	    this->dim2 = w / 2;
+	    this->n = n;
 	    }
 
-	// constructeur copie: pas besoin car pas attribut ptr
+	// constructeur copie automatique car pas pointeur dans
+	//	DamierMath
+	// 	calibreur
+	// 	IntervalF
 
-	virtual ~MandelbrotMath(void)
+	virtual ~MandelbrotMath()
 	    {
 	    // rien
 	    }
 
 	/*--------------------------------------*\
-	|*		Methode			*|
+	|*		Methodes		*|
 	 \*-------------------------------------*/
 
     public:
 
-	void colorIJ(uchar4* ptrColorIJ, int i, int j, const int N)
+	void colorXY(uchar4* ptrColor, float x, float y)
 	    {
+//	    printf("x = %f", x);
+//	    printf("y = %f", y);
+	    float z = (float) f(x, y);
+	    if (z == this->n)
+		{
+		ptrColor->x = 0;
+		ptrColor->y = 0;
+		ptrColor->z = 0;
+		}
+	    else
+		{
+		calibreur.calibrer(z);
+		float hue01 = z;
+		ColorTools::HSB_TO_RVB(hue01, ptrColor); // update color
 
-	    uchar levelGris;
-	    double x = 0;
-	    double y = 0;
-
-	    int k = f(x, y, N);
-	    levelGris = k < N ? 0 : 1 / N * k;
-//	    levelGris = 255;
-	    ptrColorIJ->x = levelGris;
-	    ptrColorIJ->y = levelGris;
-	    ptrColorIJ->z = levelGris;
-
-	    ptrColorIJ->w = 255; //opaque
+		}
+	    ptrColor->w = 255; // opaque
 	    }
 
     private:
 
-	int f(int x, int y, const int N)
+	int f(float x, float y)
 	    {
 	    float a = 0;
 	    float b = 0;
-	    float aCopy = a;
+	    float aCopy;
 	    int k = 0;
+
 	    do
 		{
+		aCopy = a;
 		a = (a * a - b * b) + x;
-		b = 2 * aCopy * b + y;
+		b = 2.0f * aCopy * b + y;
 		k += 1;
 		}
-	    while (a * a + b * b < 2 && k < N);
-	    }
+	    while (a * a + b * b < 4.0f && k < this->n);
 
-	void dij(int i, int j, float* ptrResult)
-	    {
-	    //TODO cf fonction math pdf
-	    float fi = i - dim2 / 2;
-	    float fj = j - dim2 / 2;
-	    *ptrResult = sqrt(fi * fi + fj * fj);
+	    return k;
 	    }
 
 	/*--------------------------------------*\
-	|*		Attribut			*|
+	|*		Attributs		*|
 	 \*-------------------------------------*/
 
     private:
 
-	// Tools
-	float dim2;
+	// Input
+	uint n;
 
-    }
-;
+	// Tools
+	Calibreur<float> calibreur;
+
+    };
 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
