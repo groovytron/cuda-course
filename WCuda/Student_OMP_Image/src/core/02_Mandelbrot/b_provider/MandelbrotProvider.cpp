@@ -1,16 +1,10 @@
-#include "Indice2D.h"
-#include "cudaTools.h"
-#include "Device.h"
+#include "MandelbrotProvider.h"
+#include "Mandelbrot.h"
 
-#include "IndiceTools_GPU.h"
+#include "MathTools.h"
 
-#include "RipplingMath.h"
-using namespace gpu;
-
-// Attention : 	Choix du nom est impotant!
-//		VagueDevice.cu et non Vague.cu
-// 		Dans ce dernier cas, probl�me de linkage, car le nom du .cu est le meme que le nom d'un .cpp (host)
-//		On a donc ajouter Device (ou n'importequoi) pour que les noms soient diff�rents!
+#include "ImageAnimable_CPU.h"
+using namespace cpu;
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -24,8 +18,6 @@ using namespace gpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-__global__ void rippling(uchar4* ptrDevPixels, uint w, uint h, float t);
-
 /*--------------------------------------*\
  |*		Private			*|
  \*-------------------------------------*/
@@ -38,24 +30,33 @@ __global__ void rippling(uchar4* ptrDevPixels, uint w, uint h, float t);
  |*		Public			*|
  \*-------------------------------------*/
 
-__global__ void rippling(uchar4* ptrDevPixels, uint w, uint h, float t)
+/*--------------------------------------*\
+ |*		Surcharge		*|
+ \*-------------------------------------*/
+
+/**
+ * Override
+ */
+Animable_I<uchar4>* MandelbrotProvider::createAnimable(void)
     {
-    RipplingMath ripplingMath = RipplingMath(w, h);
+    // Animation
+    float dt = 1;
 
-    const int TID = Indice2D::tid();
-    const int NB_THREAD = Indice2D::nbThread();
-    const int WH = w * h;
+    // Dimension
+    int dw = 16 * 80;
+    int dh = 16 * 60;
+    DomaineMath domaineMath(-2.1, -1.3, 0.8, 1.3, 2, 2);
 
-    // TODO pattern entrelacement
-    int s = TID;
-    int i = 0;
-    int j = 0;
-    while (s < WH)
-	{
-	IndiceTools::toIJ(s, w, &i, &j);
-	ripplingMath.colorIJ(&ptrDevPixels[s], i, j, t);
-	s += NB_THREAD;
-	}
+    return new Mandelbrot(dw, dh, domaineMath);
+    }
+
+/**
+ * Override
+ */
+Image_I* MandelbrotProvider::createImageGL(void)
+    {
+    ColorRGB_01 colorTexte(0, 1, 0); // green
+    return new ImageAnimable_RGBA_uchar4(createAnimable(),colorTexte);
     }
 
 /*--------------------------------------*\
@@ -65,4 +66,3 @@ __global__ void rippling(uchar4* ptrDevPixels, uint w, uint h, float t)
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
  \*---------------------------------------------------------------------*/
-

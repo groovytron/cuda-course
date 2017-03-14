@@ -14,7 +14,7 @@ using namespace cpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class RipplingMath
+class MandelbrotMath
     {
 	/*--------------------------------------*\
 	|*		Constructeur		*|
@@ -22,14 +22,14 @@ class RipplingMath
 
     public:
 
-	RipplingMath(uint w)
+	MandelbrotMath(uint w)
 	    {
 	    this->dim2 = w / 2;
 	    }
 
 	// constructeur copie: pas besoin car pas attribut ptr
 
-	virtual ~RipplingMath(void)
+	virtual ~MandelbrotMath(void)
 	    {
 	    // rien
 	    }
@@ -40,12 +40,16 @@ class RipplingMath
 
     public:
 
-	void colorIJ(uchar4* ptrColorIJ, int i, int j, float t)
+	void colorIJ(uchar4* ptrColorIJ, int i, int j, const int N)
 	    {
+
 	    uchar levelGris;
+	    double x = 0;
+	    double y = 0;
 
-	    f(j, i, t, &levelGris);
-
+	    int k = f(x, y, N);
+	    levelGris = k < N ? 0 : 1 / N * k;
+//	    levelGris = 255;
 	    ptrColorIJ->x = levelGris;
 	    ptrColorIJ->y = levelGris;
 	    ptrColorIJ->z = levelGris;
@@ -55,13 +59,19 @@ class RipplingMath
 
     private:
 
-	void f(int i, int j, float t, uchar* ptrlevelGris)
+	int f(int x, int y, const int N)
 	    {
-	    // TODO cf fonction math pdf
-	    // use focntion dij ci-dessous
-	    float dijResult;
-	    dij(i, j, &dijResult);
-	    *ptrlevelGris = 128 + 127  * (cos(dijResult / 10.f - t / 7.f) / (dijResult / 10.f + 1.f));
+	    float a = 0;
+	    float b = 0;
+	    float aCopy = a;
+	    int k = 0;
+	    do
+		{
+		a = (a * a - b * b) + x;
+		b = 2 * aCopy * b + y;
+		k += 1;
+		}
+	    while (a * a + b * b < 2 && k < N);
 	    }
 
 	void dij(int i, int j, float* ptrResult)
@@ -81,7 +91,8 @@ class RipplingMath
 	// Tools
 	float dim2;
 
-    };
+    }
+;
 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|

@@ -1,11 +1,19 @@
-#include "RipplingMath.h"
-#include "Rippling.h"
+#include "Mandelbrot.h"
 
-#include <iostream>
+#include <IndiceTools_CPU.h>
 #include <omp.h>
-#include "OmpTools.h"
+#include <OmpTools.h>
+#include <ParallelPatern.h>
+#include <iostream>
 
-#include "IndiceTools_CPU.h"
+#include "../../01_Rippling/a_animable/math/RipplingMath.h"
+#include "math/MandelbrotMath.h"
+
+namespace cpu
+    {
+    class IndiceTools;
+    } /* namespace cpu */
+
 using cpu::IndiceTools;
 
 using std::cout;
@@ -31,11 +39,12 @@ using std::endl;
  |*		Public			*|
  \*-------------------------------------*/
 
-Rippling::Rippling(uint w, uint h, float dt) :
-	Animable_I<uchar4>(w, h, "Rippling_OMP_rgba_uchar4")
+Mandelbrot::Mandelbrot(uint w, uint h, DomaineMath domaineMath) :
+	Animable_I<uchar4>(w, h, "Mandelbrot_OMP_rgba_uchar4")
     {
     // Input
     this->dt = dt;  // animation
+    this->domaineMath = domaineMath;
 
     // Tools
     this->t = 0;					// protected dans super classe Animable
@@ -45,7 +54,7 @@ Rippling::Rippling(uint w, uint h, float dt) :
     cout << "\n[Rippling] : OMP : nbThread = " << this->nbThread << endl; // protected dans super classe Animable
     }
 
-Rippling::~Rippling(void)
+Mandelbrot::~Mandelbrot(void)
     {
     // rien
     }
@@ -57,7 +66,7 @@ Rippling::~Rippling(void)
 /**
  * Override
  */
-void Rippling::animationStep()
+void Mandelbrot::animationStep()
     {
     t += dt;
     }
@@ -70,17 +79,18 @@ void Rippling::animationStep()
  * Override (code naturel omp)
  * Image non zoomable : domaineMath pas use ici
  */
-void Rippling::processForAutoOMP(uchar4* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath)
+void Mandelbrot::processForAutoOMP(uchar4* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath)
     {
-    RipplingMath ripplingMath(w);
+    MandelbrotMath mandelbrotMath(w);
+    const int N = 12;
 
-    #pragma OMP parralel for
-    for(int i=0;i<=h;i++)
+#pragma omp parallel for
+    for (int i = 0; i < h; i++)
 	{
-	for(int j=0;j<=w;j++)
+	for (int j = 0; j < w; j++)
 	    {
 	    int s = IndiceTools::toS(w, i, j);
-	    ripplingMath.colorIJ(&ptrTabPixels[s], i, j, t);
+	    mandelbrotMath.colorIJ(&ptrTabPixels[s], i, j, N);
 	    }
 	}
     }
@@ -89,14 +99,17 @@ void Rippling::processForAutoOMP(uchar4* ptrTabPixels, uint w, uint h, const Dom
  * Override (code entrainement cuda)
  * Image non zoomable : domaineMath pas use ici
  */
-void Rippling::processEntrelacementOMP(uchar4* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath)
+void Mandelbrot::processEntrelacementOMP(uchar4* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath)
     {
-    RipplingMath ripplingmath(w);
     const int WH = w * h;
 
-    #pragma OMP parralel
+//    RipplingMath ripplingMath = RipplingMath(w); // v1
+
+    MandelbrotMath mandelbrotMath(w); // v2
+
+#pragma omp parallel
 	{
-	int NB_THREADS = OmpTools::getNbThread();
+	const int NB_THREAD = OmpTools::getNbThread();
 	const int TID = OmpTools::getTid();
 	int s = TID;
 	int i;
@@ -105,10 +118,9 @@ void Rippling::processEntrelacementOMP(uchar4* ptrTabPixels, uint w, uint h, con
 	while (s < WH)
 	    {
 	    IndiceTools::toIJ(s, w, &i, &j);
+	    mandelbrotMath.colorIJ(&ptrTabPixels[s], i, j, t);
 
-	    ripplingmath.colorIJ(&ptrTabPixels[s], i, j, t);
-
-	    s += NB_THREADS;
+	    s += NB_THREAD;
 	    }
 	}
     }

@@ -4,8 +4,6 @@
 #include "MathTools.h"
 #include "Grid.h"
 
-
-
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
  \*---------------------------------------------------------------------*/
@@ -46,9 +44,11 @@ Animable_I<uchar4>* RipplingProvider::createAnimable()
     int mp = Device::getMPCount();
     int coreMP = Device::getCoreCountMP();
 
-    Grid grid;  // TODO definissez une grille cuda (dg, db)
+    dim3 dg = dim3(46, 2, 1);  		// disons, a optimiser selon le gpu, peut drastiqument ameliorer ou baisser les performances
+    dim3 db = dim3(448, 2, 1);
+    Grid grid(dg, db);  // TODO definissez une grille cuda (dg, db)
 
-    return new Rippling(grid,dw, dh, dt);
+    return new Rippling(grid, dw, dh, dt);
     }
 
 /**
@@ -59,8 +59,6 @@ Image_I* RipplingProvider::createImageGL(void)
     ColorRGB_01 colorTexte(0, 1, 0); // Green
     return new ImageAnimable_RGBA_uchar4(createAnimable(), colorTexte);
     }
-
-
 
 /*--------------------------------------*\
  |*		Private			*|

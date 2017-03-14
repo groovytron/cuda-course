@@ -1,9 +1,11 @@
+#include <GLUTImageViewers_A.h>
+#include <ImageOption.h>
+#include <Settings_CPU.h>
+#include <Viewer_CPU.h>
 #include <iostream>
 
-#include "RipplingProvider.h"
+#include "02_Mandelbrot/b_provider/MandelbrotProvider.h"
 
-#include "Viewer_CPU.h"
-#include "Settings_CPU.h"
 using namespace cpu;
 
 using std::cout;
@@ -48,8 +50,11 @@ int mainImage(Settings& settings)
     // ImageOption : (boolean,boolean) : (isSelection,isAnimation)
     ImageOption zoomable(true);
     ImageOption nozoomable(false);
+//    ImageOption zoomable(true, true, true, true);
+//    ImageOption nozoomable(false, true, true, true);
 
-    Viewer<RipplingProvider> rippling(nozoomable, 0, 0); //  imageOption px py
+//    Viewer<RipplingProvider> rippling(nozoomable, 0, 0); //  imageOption px py
+    Viewer<MandelbrotProvider> mandelbrot(nozoomable, 0, 0); //  imageOption px py
 
     GLUTImageViewers::runALL();  // Bloquant, Tant qu'une fenetre est ouverte
 

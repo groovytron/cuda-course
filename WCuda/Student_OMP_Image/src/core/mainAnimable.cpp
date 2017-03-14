@@ -1,10 +1,16 @@
-#include <iostream>
+#include <Animateur_CPU.h>
+#include <cudaType_CPU.h>
+#include <Provider_I_CPU.h>
 #include <stdlib.h>
+#include <iostream>
 
-#include "RipplingProvider.h"
+#include "01_Rippling/b_provider/RipplingProvider.h"
 
-#include "Animateur_CPU.h"
-#include "Settings_CPU.h"
+namespace cpu
+    {
+    class Settings;
+    } /* namespace cpu */
+
 using namespace cpu;
 
 using std::cout;
@@ -48,7 +54,7 @@ int mainAnimable(Settings& settings)
     cout << "\n[Animable] mode" << endl;
 
     rippling();
-    // mandelbrot();
+//    mandelbrot();
 
     cout << "\n[Animable] end" << endl;
 

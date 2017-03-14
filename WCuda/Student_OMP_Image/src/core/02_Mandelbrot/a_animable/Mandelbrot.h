@@ -12,7 +12,7 @@ using namespace cpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class Rippling: public Animable_I<uchar4>
+class Mandelbrot: public Animable_I<uchar4>
     {
 
 	/*--------------------------------------*\
@@ -21,9 +21,9 @@ class Rippling: public Animable_I<uchar4>
 
     public:
 
-	Rippling(uint w, uint h, float dt);
+	Mandelbrot(uint w, uint h, DomaineMath domaineMath);
 
-	virtual ~Rippling(void);
+	virtual ~Mandelbrot(void);
 
 	/*--------------------------------------*\
 	 |*		Methode			*|
@@ -61,6 +61,7 @@ class Rippling: public Animable_I<uchar4>
 
 	// Inputs
 	double dt;
+	DomaineMath domaineMath;
 
     };
 
