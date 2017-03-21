@@ -37,7 +37,7 @@ using namespace cpu;
 /**
  * Override
  */
-Animable_I<uchar4>* RayTracingProvider::createAnimable(void)
+Animable_I<uchar4>* RipplingProvider::createAnimable(void)
     {
     // Animation
     float dt = 1;
@@ -52,7 +52,7 @@ Animable_I<uchar4>* RayTracingProvider::createAnimable(void)
 /**
  * Override
  */
-Image_I* RayTracingProvider::createImageGL(void)
+Image_I* RipplingProvider::createImageGL(void)
     {
     ColorRGB_01 colorTexte(0, 1, 0); // green
     return new ImageAnimable_RGBA_uchar4(createAnimable(),colorTexte);

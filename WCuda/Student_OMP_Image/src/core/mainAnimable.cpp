@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "01_Rippling/b_provider/RipplingProvider.h"
+#include "04_Raytracing/b_provider/RayTracingProvider.h"
 
 namespace cpu
     {
@@ -36,6 +37,7 @@ int mainAnimable(Settings& settings);
  \*-------------------------------------*/
 
 static void rippling();
+//static void raytracing();
 
 // Tools
 template<typename T>
@@ -55,6 +57,7 @@ int mainAnimable(Settings& settings)
 
     rippling();
 //    mandelbrot();
+//    raytracing();
 
     cout << "\n[Animable] end" << endl;
 
@@ -69,9 +72,17 @@ void rippling()
     {
     const int NB_ITERATION = 1000;
 
-    RayTracingProvider provider;
+    RipplingProvider provider;
     animer<uchar4>(&provider, NB_ITERATION);
     }
+
+//void raytracing()
+//    {
+//    const int NB_ITERATION = 1000;
+//
+//    RayTracingProvider provider;
+//    animer<uchar4>(&provider, NB_ITERATION);
+//    }
 
 /*-----------------------------------*\
  |*		Tools	        	*|

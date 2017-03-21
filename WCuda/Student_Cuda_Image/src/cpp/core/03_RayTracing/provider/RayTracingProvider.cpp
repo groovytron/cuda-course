@@ -33,6 +33,8 @@
  */
 Animable_I<uchar4>* RayTracingProvider::createAnimable()
     {
+    const int NB_SPHERE = 1;
+
     // Animation;
     float dt = 2 * PI / 10;
 
@@ -48,7 +50,7 @@ Animable_I<uchar4>* RayTracingProvider::createAnimable()
     dim3 db = dim3(448, 2, 1);
     Grid grid(dg, db);  // TODO definissez une grille cuda (dg, db)
 
-    return new RayTracing(grid, dw, dh, dt);
+    return new RayTracing(grid, dw, dh, dt, NB_SPHERE);
     }
 
 /**

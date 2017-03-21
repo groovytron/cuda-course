@@ -1,11 +1,11 @@
 #pragma once
 
-#include "cudaTools.h"
+#include <math.h>
 #include "MathTools.h"
-#include "Sphere.h"
 
-#include "Animable_I_GPU.h"
-using namespace gpu;
+#include "Calibreur_CPU.h"
+#include "ColorTools_CPU.h"
+using namespace cpu;
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -15,51 +15,66 @@ using namespace gpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class RayTracing: public Animable_I<uchar4>
+class RayTracingMath
     {
+
 	/*--------------------------------------*\
 	|*		Constructor		*|
 	 \*-------------------------------------*/
 
     public:
 
-	RayTracing(const Grid& grid, uint w, uint h, float dt, int nbSpheres);
-	virtual ~RayTracing(void);
+	RayTracingMath(uint n) :
+		calibreur(Interval<float>(-1, 1), Interval<float>(0, 1))
+	    {
+	    this->n = n;
+	    }
+
+	// constructeur copie automatique car pas pointeur dans
+	//	DamierMath
+	// 	calibreur
+	// 	IntervalF
+
+	virtual ~RayTracingMath()
+	    {
+	    // rien
+	    }
 
 	/*--------------------------------------*\
-	 |*		Methodes		*|
+	|*		Methodes		*|
 	 \*-------------------------------------*/
 
     public:
 
-	/*-------------------------*\
-	|*   Override Animable_I   *|
-	 \*------------------------*/
+	void colorXY(float* ptrColor, float x, float y, float t)
+	    {
+	    float z = f(x, y, t);
 
-	/**
-	 * Call periodicly by the api
-	 */
-	virtual void process(uchar4* ptrDevPixels, uint w, uint h, const DomaineMath& domaineMath);
+	    calibreur.calibrer(z);
+	    float hue01 = z;
 
-	/**
-	 * Call periodicly by the api
-	 */
-	virtual void animationStep();
+	    *ptrColor= hue01;
+	    }
+
+    private:
+
+	float f(float x, float y, float t)
+	    {
+	    return sin(x * n + t) * cos(y * n + t);
+	    }
 
 	/*--------------------------------------*\
-	 |*		Attributs		*|
+	|*		Attributs		*|
 	 \*-------------------------------------*/
 
     private:
 
-	// Inputs
-	float dt;
-	Sphere* ptrSpheres;
-	int nbSpheres;
-	size_t sizeOctet;
+	// Input
+	uint n;
 
 	// Tools
-	Sphere* ptrDevSpheres;
+	Calibreur<float> calibreur;
+
     };
 
 /*----------------------------------------------------------------------*\

@@ -4,7 +4,9 @@
 #include <Viewer_CPU.h>
 #include <iostream>
 
+#include "01_Rippling/b_provider/RipplingProvider.h"
 #include "02_Mandelbrot/b_provider/MandelbrotProvider.h"
+#include "04_Raytracing/b_provider/RayTracingProvider.h"
 
 using namespace cpu;
 
@@ -51,10 +53,11 @@ int mainImage(Settings& settings)
 //    ImageOption zoomable(true);
 //    ImageOption nozoomable(false);
     ImageOption zoomable(true, true, true, true);
-//    ImageOption nozoomable(false, true, true, true);
+    ImageOption nozoomable(false, true, true, true);
 
 //    Viewer<RipplingProvider> rippling(nozoomable, 0, 0); //  imageOption px py
-    Viewer<MandelbrotProvider> mandelbrot(zoomable, 25, 25); //  imageOption px py
+//    Viewer<MandelbrotProvider> mandelbrot(zoomable, 25, 25); //  imageOption px py
+    Viewer<RayTracingProvider> rayTracing(nozoomable, 0, 0); //  imageOption px py
 
     GLUTImageViewers::runALL();  // Bloquant, Tant qu'une fenetre est ouverte
 

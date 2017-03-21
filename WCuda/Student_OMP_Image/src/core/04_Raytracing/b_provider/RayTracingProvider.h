@@ -13,11 +13,11 @@ using namespace cpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class RipplingProvider: public Provider_I<uchar4>
+class RayTracingProvider: public Provider_I<float>
     {
     public:
 
-	virtual ~RipplingProvider()
+	virtual ~RayTracingProvider()
 	    {
 	    // Rien
 	    }
@@ -26,7 +26,7 @@ class RipplingProvider: public Provider_I<uchar4>
 	 |*		Override		*|
 	 \*-------------------------------------*/
 
-	Animable_I<uchar4>* createAnimable(void);
+	Animable_I<float>* createAnimable(void);
 
 	Image_I* createImageGL(void);
 

@@ -1,17 +1,13 @@
-#include "Indice2D.h"
-#include "cudaTools.h"
-#include "Device.h"
+#include "RayTracingProvider.h"
 
-#include "IndiceTools_GPU.h"
-#include "RayTracingMath.h"
-#include "Sphere.h"
+#include "MathTools.h"
 
-using namespace gpu;
+#include "ImageAnimable_CPU.h"
+#include "DomaineMath_CPU.h"
 
-// Attention : 	Choix du nom est impotant!
-//		VagueDevice.cu et non Vague.cu
-// 		Dans ce dernier cas, probl�me de linkage, car le nom du .cu est le meme que le nom d'un .cpp (host)
-//		On a donc ajouter Device (ou n'importequoi) pour que les noms soient diff�rents!
+#include "../a_animable/RayTracing.h"
+using namespace cpu;
+
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -25,8 +21,6 @@ using namespace gpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-__global__ void raytracing(Sphere* ptrDevSpheres, uchar4* ptrDevPixels, uint w, uint h, float t, int nbSpheres);
-
 /*--------------------------------------*\
  |*		Private			*|
  \*-------------------------------------*/
@@ -39,23 +33,35 @@ __global__ void raytracing(Sphere* ptrDevSpheres, uchar4* ptrDevPixels, uint w, 
  |*		Public			*|
  \*-------------------------------------*/
 
-__global__ void raytracing(Sphere* ptrDevSpheres, uchar4* ptrDevPixels, uint w, uint h, float t, int nbSpheres)
+/*--------------------------------------*\
+ |*		Surcharge		*|
+ \*-------------------------------------*/
+
+/**
+ * Override
+ */
+Animable_I<float>* RayTracingProvider::createAnimable(void)
     {
-    RayTracingMath rayTracingMath = RayTracingMath(w, h, ptrDevSpheres, nbSpheres);
+    DomaineMath domaineMath = DomaineMath(0, 0, 2 * PI, 2 * PI);
 
-    const int TID = Indice2D::tid();
-    const int NB_THREAD = Indice2D::nbThread();
-    const int WH = w * h;
+    // Animation;
+    float dt = 2 * PI / 800;
+    int n = 2;
 
-    int s = TID;
-    int i = 0;
-    int j = 0;
-    while (s < WH)
-	{
-	IndiceTools::toIJ(s, w, &i, &j);
-	rayTracingMath.colorIJ(&ptrDevPixels[s], i, j, t);
-	s += NB_THREAD;
-	}
+    // Dimension
+    int dw = 16 * 60 * 2;
+    int dh = 16 * 60;
+
+    return new RayTracing(dw, dh, dt, n, domaineMath);
+    }
+
+/**
+ * Override
+ */
+Image_I* RayTracingProvider::createImageGL(void)
+    {
+    ColorRGB_01 colorTexte(0, 0, 0); // black
+    return new ImageAnimable_HUE_float(createAnimable(),colorTexte);
     }
 
 /*--------------------------------------*\
@@ -65,4 +71,3 @@ __global__ void raytracing(Sphere* ptrDevSpheres, uchar4* ptrDevPixels, uint w, 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
  \*---------------------------------------------------------------------*/
-

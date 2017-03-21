@@ -1,11 +1,11 @@
 #pragma once
 
-#include "cudaTools.h"
-#include "MathTools.h"
-#include "Sphere.h"
+#include "cudaType_CPU.h"
+#include "Variateur_CPU.h"
+#include "Animable_I_CPU.h"
 
-#include "Animable_I_GPU.h"
-using namespace gpu;
+#include "math/RayTracingMath.h"
+using namespace cpu;
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -15,19 +15,21 @@ using namespace gpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class RayTracing: public Animable_I<uchar4>
+class RayTracing: public Animable_I<float>
     {
+
 	/*--------------------------------------*\
-	|*		Constructor		*|
+	 |*		Constructeur		*|
 	 \*-------------------------------------*/
 
     public:
 
-	RayTracing(const Grid& grid, uint w, uint h, float dt, int nbSpheres);
+	RayTracing(uint w, uint h, float dt, uint n, const DomaineMath& domaineMath);
+
 	virtual ~RayTracing(void);
 
 	/*--------------------------------------*\
-	 |*		Methodes		*|
+	 |*		Methode			*|
 	 \*-------------------------------------*/
 
     public:
@@ -39,29 +41,44 @@ class RayTracing: public Animable_I<uchar4>
 	/**
 	 * Call periodicly by the api
 	 */
-	virtual void process(uchar4* ptrDevPixels, uint w, uint h, const DomaineMath& domaineMath);
+	virtual void processEntrelacementOMP(float* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath);
+
+	/**
+	 * Call periodicly by the api
+	 */
+	virtual void processForAutoOMP(float* ptrTabPixels, uint w, uint h, const DomaineMath& domaineMath);
 
 	/**
 	 * Call periodicly by the api
 	 */
 	virtual void animationStep();
 
+    private:
+
+	/**
+	 * i in [0,h[
+	 * j in [0,w[
+	 *
+	 * code commun a:
+	 * 	- entrelacementOMP
+	 * 	- forAutoOMP
+	 */
+	void workPixel(float* ptrColorIJ, int i, int j, const DomaineMath& domaineMath, RayTracingMath* ptrDamierMath);
+
 	/*--------------------------------------*\
-	 |*		Attributs		*|
+	|*		Attribut		*|
 	 \*-------------------------------------*/
 
     private:
 
 	// Inputs
-	float dt;
-	Sphere* ptrSpheres;
-	int nbSpheres;
-	size_t sizeOctet;
+	uint n;
 
 	// Tools
-	Sphere* ptrDevSpheres;
+	Variateur<float> variateurAnimation;
+
     };
 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
- \*---------------------------------------------------------------------*/
+ /*----------------------------------------------------------------------*/
