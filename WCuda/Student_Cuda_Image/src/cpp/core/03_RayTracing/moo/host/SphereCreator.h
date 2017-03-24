@@ -14,11 +14,13 @@ class SphereCreator
     private:
 
 	void createSphere(void);
-// Inputs
+
+	// Inputs
 	int nbSpheres;
 	int w;
 	int h;
 	int bord;
-// Tools
+
+	// Tools
 	Sphere* tabSphere;
     };

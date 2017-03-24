@@ -2,11 +2,12 @@
 
 #include "cudaTools.h"
 #include "MathTools.h"
-#include "../device/math/Sphere.h"
-#include "SphereCreator.h"
-#include "Animable_I_GPU.h"
+#include "DomaineMath_GPU.h"
 
+#include "Variateur_GPU.h"
+#include "Animable_I_GPU.h"
 using namespace gpu;
+
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -16,19 +17,19 @@ using namespace gpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class RayTracing: public Animable_I<uchar4>
+class Mandelbrot: public Animable_I<uchar4>
     {
+
 	/*--------------------------------------*\
-	|*		Constructor		*|
+	 |*		Constructeur		*|
 	 \*-------------------------------------*/
 
     public:
 
-	RayTracing(uint nbSphere, const Grid& grid, uint w, uint h, float dt);
-	virtual ~RayTracing(void);
-
+	Mandelbrot(const Grid& grid, uint w, uint h, uint dt, const DomaineMath& domaineMath);
+	virtual ~Mandelbrot(void);
 	/*--------------------------------------*\
-	 |*		Methodes		*|
+	 |*		Methode			*|
 	 \*-------------------------------------*/
 
     public:
@@ -36,6 +37,7 @@ class RayTracing: public Animable_I<uchar4>
 	/*-------------------------*\
 	|*   Override Animable_I   *|
 	 \*------------------------*/
+
 
 	/**
 	 * Call periodicly by the api
@@ -47,27 +49,17 @@ class RayTracing: public Animable_I<uchar4>
 	 */
 	virtual void animationStep();
 
+
 	/*--------------------------------------*\
-	 |*		Attributs		*|
+	|*		Attribut		*|
 	 \*-------------------------------------*/
 
     private:
 
-	// Inputs
-	uint nbSphere;
-	float dt;
-
-	// tools
-	dim3 dg;
-	dim3 db;
-	size_t sizeOctet;
-	Sphere* ptrDevTabSphere;
-
-	// Constants
-	static const int BORD = 200;
+	Variateur<int> variateurAnimation;
 
     };
 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
- \*---------------------------------------------------------------------*/
+ /*----------------------------------------------------------------------*/

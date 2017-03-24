@@ -36,8 +36,7 @@ void SphereCreator::createSphere(void)
 	centre.z = aleaTools.uniformeAB(10, 2 * w);
 	float rayon = aleaTools.uniformeAB(20, w / 10);
 	float hue01 = aleaTools.uniforme01();
-	//printf("centre : %f %f %f",centre.x,centre.y,centre.z);
-	//printf("rayon : %f ",rayon);
+
 	tabSphere[i] = Sphere(centre, rayon, hue01);
 // Warning : sphere stack copier dans sphere heap, // ok car pas ptr dans Sphere }
 	}

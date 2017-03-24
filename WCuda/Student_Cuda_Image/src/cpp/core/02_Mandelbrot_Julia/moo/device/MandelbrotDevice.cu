@@ -1,18 +1,16 @@
-#include "RayTracing.h"
+#include "Indice2D.h"
+#include "cudaTools.h"
+#include "Device.h"
 
-#include "MathTools.h"
-#include "Grid.h"
-#include "RayTracingProvider.h"
+#include "math/MandelbrotMath.h"
+#include "DomaineMath_GPU.h"
+#include "IndiceTools_GPU.h"
 
-
+using namespace gpu;
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
  \*---------------------------------------------------------------------*/
-
-/*--------------------------------------*\
- |*		Imported	 	*|
- \*-------------------------------------*/
 
 /*--------------------------------------*\
  |*		Public			*|
@@ -29,47 +27,35 @@
 /*--------------------------------------*\
  |*		Public			*|
  \*-------------------------------------*/
-
-/**
- * Override
- */
-Animable_I<uchar4>* RayTracingProvider::createAnimable()
+__global__ void mandelbrot(uchar4* ptrDevPixels, uint w, uint h, uint t, DomaineMath domaineMath)
     {
-    //animation
-    float dt = 2.f * PI_FLOAT / 1000.f;
+    MandelbrotMath mandelbrotMath = MandelbrotMath(t);
 
-    int nbSphere = 80;
+    const int WH = w * h;
+    const int TID = Indice2D::tid();
+    const int NB_THREAD = Indice2D::nbThread();
 
-    // Dimension
-    int dw = 16 * 60 ;
-    int dh = 16 * 60;
+    int i = 0;
+    int j = 0;
 
-    // Grid Cuda
-    int mp = Device::getMPCount();
-    int coreMP = Device::getCoreCountMP();
+    double x = 0;
+    double y = 0;
 
-    dim3 dg = dim3(46, 1, 1);
-    dim3 db = dim3(448, 1,1);
-    Grid grid(dg, db);
-
-    return new RayTracing(nbSphere, grid, dw, dh, dt);
+    int s = TID;
+    while (s < WH)
+	{
+	IndiceTools::toIJ(s, w, &i, &j);
+	domaineMath.toXY(i, j, &x, &y);
+	mandelbrotMath.colorXY(&ptrDevPixels[s], (float)x, (float)y);
+	s += NB_THREAD;
+	}
     }
-
-/**
- * Override
- */
-Image_I* RayTracingProvider::createImageGL(void)
-    {
-    ColorRGB_01 colorTexte(0, 1, 0); // Green
-    return new ImageAnimable_RGBA_uchar4(createAnimable(), colorTexte);
-    }
-
-
 
 /*--------------------------------------*\
- |*		Private			*|
+ |*		Public			*|
  \*-------------------------------------*/
 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
  \*---------------------------------------------------------------------*/
+

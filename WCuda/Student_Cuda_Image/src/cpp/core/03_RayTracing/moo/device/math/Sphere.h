@@ -5,26 +5,21 @@
 #include "cudaTools.h"
 #include "MathTools.h"
 
-
 class Sphere
     {
 
     public:
 
-	__host__
-	Sphere(float3 centre, float rayon, float hue)
+	__host__ Sphere(float3 centre, float rayon, float hue)
 	    {
 	    this->centre = centre;
 	    this->r = rayon;
 	    this->hueStart = hue;
-
 	    this->rCarre = rayon * rayon;
 	    }
 
-	__host__
-	Sphere()
+	__host__ Sphere()
 	    {
-
 	    }
 
 	__device__
@@ -71,13 +66,14 @@ class Sphere
 	    return 0.5f + 0.5f * sinf(t + hueStart + 3.0f * PI_FLOAT / 2.0f);
 	    }
 
-    public :
+    public:
 	// Inputs
 	float r;
 	float3 centre;
 	float hueStart;
+
 	// Tools
 	float rCarre;
 
-	};
+    };
 #endif

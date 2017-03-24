@@ -9,12 +9,9 @@
 #include "RayTracingMath.h"
 using namespace gpu;
 
-
-
-
-__global__ void rayTracing(uchar4* ptrDevPixels, uint w, uint h, float t,uint nbSphere, Sphere* ptrDevTabSphere)
+__global__ void rayTracing(uchar4* ptrDevPixels, uint w, uint h, float t, uint nbSphere, Sphere* ptrDevTabSphere)
     {
-    RaytracingMath raytracingMath = RaytracingMath(t,nbSphere,ptrDevTabSphere);
+    RaytracingMath raytracingMath = RaytracingMath(t, nbSphere, ptrDevTabSphere);
 
     const int TID = Indice2D::tid();
     const int NB_THREAD = Indice2D::nbThread();
@@ -27,11 +24,8 @@ __global__ void rayTracing(uchar4* ptrDevPixels, uint w, uint h, float t,uint nb
     while (s < WH)
 	{
 	IndiceTools::toIJ(s, w, &i, &j);
-
-	raytracingMath.colorIJ(&ptrDevPixels[s],(float)i, (float)j);
-
+	raytracingMath.colorIJ(&ptrDevPixels[s], i, j);
 	s += NB_THREAD;
 	}
     }
-
 

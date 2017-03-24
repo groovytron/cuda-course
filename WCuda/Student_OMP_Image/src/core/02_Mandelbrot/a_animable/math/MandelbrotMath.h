@@ -33,11 +33,6 @@ class MandelbrotMath
 	    this->n = n;
 	    }
 
-	// constructeur copie automatique car pas pointeur dans
-	//	DamierMath
-	// 	calibreur
-	// 	IntervalF
-
 	virtual ~MandelbrotMath()
 	    {
 	    // rien
@@ -63,8 +58,8 @@ class MandelbrotMath
 	    else
 		{
 		calibreur.calibrer(z);
-		float hue01 = z;
-		ColorTools::HSB_TO_RVB(hue01, ptrColor); // update color
+		float hue = z;
+		ColorTools::HSB_TO_RVB(hue, ptrColor); // update color
 
 		}
 	    ptrColor->w = 255; // opaque

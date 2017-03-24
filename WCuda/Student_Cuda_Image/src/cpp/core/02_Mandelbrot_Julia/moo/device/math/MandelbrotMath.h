@@ -2,10 +2,10 @@
 
 #include <math.h>
 #include "MathTools.h"
-#include "Sphere.h"
-#include <stdio.h>
+#include "Device.h"
 
 #include "ColorTools_GPU.h"
+#include "Calibreur_GPU.h"
 using namespace gpu;
 
 /*----------------------------------------------------------------------*\
@@ -16,23 +16,22 @@ using namespace gpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class RaytracingMath
+class MandelbrotMath
     {
+
 	/*--------------------------------------*\
 	|*		Constructor		*|
 	 \*-------------------------------------*/
 
     public:
 
-	__device__ RaytracingMath(float t, int nbSphere, Sphere* ptrDevTabSphere)
+	__device__ MandelbrotMath(uint n) : calibreur(Interval<float>(0, n), Interval<float>(0, 1))
 	    {
-	    this->t = t;
-	    this->nbSphere = nbSphere;
-	    this->ptrDevTabSphere = ptrDevTabSphere;
+	    this->n = n;
 	    }
 
 	__device__
-	          virtual ~RaytracingMath()
+	  virtual ~MandelbrotMath()
 	    {
 	    // rien
 	    }
@@ -42,37 +41,46 @@ class RaytracingMath
 	 \*-------------------------------------*/
 
     public:
-
 	__device__
-	void colorIJ(uchar4* ptrColor, float i, float j)
+	void colorXY(uchar4* ptrColor, float x, float y)
 	    {
-	    f(ptrColor, i, j);
-	    ptrColor->w = 255;
-	    }
-
-	__device__
-	void f(uchar4* ptrColor, float i, float j)
-	    {
-	    ptrColor->x = 0;
-	    ptrColor->y = 0;
-	    ptrColor->z = 0;
-
-	    float hCarre;
-
-	    for (uint k = 0; k < nbSphere; k++)
+	    float z = (float) f(x, y);
+	    if (z == this->n)
 		{
-		hCarre = ptrDevTabSphere[k].hCarre(i, j);
-		if (ptrDevTabSphere[k].isEnDessous(hCarre))
-		    {
-		    float hue = ptrDevTabSphere[k].hue(t);
-		    float brightness = ptrDevTabSphere[k].brightness(ptrDevTabSphere[k].dz(hCarre));
-		    ColorTools::HSB_TO_RVB(hue, 1.f, brightness, ptrColor);
-		    break;
-		    }
+		ptrColor->x = 0;
+		ptrColor->y = 0;
+		ptrColor->z = 0;
 		}
+	    else
+		{
+		calibreur.calibrer(z);
+		float hue = z;
+		ColorTools::HSB_TO_RVB(hue, ptrColor); // update color
+
+		}
+	    ptrColor->w = 255; // opaque
 	    }
 
     private:
+	__device__
+	int f(float x, float y)
+	    {
+	    float a = 0;
+	    float b = 0;
+	    float aCopy;
+	    int k = 0;
+
+	    do
+		{
+		aCopy = a;
+		a = (a * a - b * b) + x;
+		b = 2.0f * aCopy * b + y;
+		k += 1;
+		}
+	    while (a * a + b * b < 4.0f && k < this->n);
+
+	    return k;
+	    }
 
 	/*--------------------------------------*\
 	|*		Attributs		*|
@@ -80,10 +88,11 @@ class RaytracingMath
 
     private:
 
+	// Input
+	uint n;
+
 	// Tools
-	float t;
-	int nbSphere;
-	Sphere* ptrDevTabSphere;
+	Calibreur<float> calibreur;
 
     };
 

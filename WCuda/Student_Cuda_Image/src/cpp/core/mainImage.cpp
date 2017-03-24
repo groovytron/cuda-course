@@ -1,15 +1,15 @@
-#include <iostream>
+#include <GLUTImageViewers_A.h>
+#include <ImageOption.h>
 #include <stdlib.h>
 #include <string.h>
+#include <Settings_GPU.h>
+#include <Viewer_GPU.h>
+#include <iostream>
 
-#include "Device.h"
-#include "cudaTools.h"
+#include "01_Rippling/02_provider/RipplingProvider.h"
+#include "02_Mandelbrot_Julia/provider/MandelbrotProvider.h"
+#include "03_RayTracing/provider/RayTracingProvider.h"
 
-#include "RipplingProvider.h"
-#include "RayTracingProvider.h"
-
-#include "Settings_GPU.h"
-#include "Viewer_GPU.h"
 using namespace gpu;
 
 using std::cout;
@@ -49,13 +49,14 @@ int mainImage(Settings& settings)
     GLUTImageViewers::init(settings.getArgc(), settings.getArgv()); //only once
 
     // ImageOption : (boolean,boolean) : (isSelection,isAnimation)
-    ImageOption zoomable(true);
-    ImageOption nozoomable(false);
+    ImageOption zoomable(true, true, true, true);
+    ImageOption nozoomable(false, true, true, true);
 
-    Viewer<RipplingProvider> vague(nozoomable, 25, 25); // imageOption px py
-//    Viewer<RayTracingProvider> raytracing(nozoomable, 25, 25); // imageOption px py
+    Viewer<RipplingProvider> vague(nozoomable, 0, 0);
+    Viewer<MandelbrotProvider> mandelbrot(zoomable, 400, 0);
+    Viewer<RayTracingProvider> raytracing(nozoomable, 800, 0);
 
-    // Common
+    // Common5
     GLUTImageViewers::runALL(); // Bloquant, Tant qu'une fenetre est ouverte
 
     cout << "\n[Image] end" << endl;
