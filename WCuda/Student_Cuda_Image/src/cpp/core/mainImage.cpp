@@ -52,8 +52,8 @@ int mainImage(Settings& settings)
     ImageOption zoomable(true, true, true, true);
     ImageOption nozoomable(false, true, true, true);
 
-    Viewer<RipplingProvider> vague(nozoomable, 0, 0);
-    Viewer<MandelbrotProvider> mandelbrot(zoomable, 400, 0);
+//    Viewer<RipplingProvider> vague(nozoomable, 0, 0);
+//    Viewer<MandelbrotProvider> mandelbrot(zoomable, 400, 0);
     Viewer<RayTracingProvider> raytracing(nozoomable, 800, 0);
 
     // Common5

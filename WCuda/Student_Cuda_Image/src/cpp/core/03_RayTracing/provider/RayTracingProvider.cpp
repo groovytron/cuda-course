@@ -38,7 +38,7 @@ Animable_I<uchar4>* RayTracingProvider::createAnimable()
     //animation
     float dt = 2.f * PI_FLOAT / 1000.f;
 
-    int nbSphere = 80;
+    int nbSphere = 120;
 
     // Dimension
     int dw = 16 * 60 ;

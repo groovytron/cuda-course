@@ -58,16 +58,19 @@ class RaytracingMath
 	    ptrColor->z = 0;
 
 	    float hCarre;
+	    float dz;
+	    float distanceMin = 12000;
 
 	    for (uint k = 0; k < nbSphere; k++)
 		{
 		hCarre = ptrDevTabSphere[k].hCarre(i, j);
-		if (ptrDevTabSphere[k].isEnDessous(hCarre))
+		dz = ptrDevTabSphere[k].dz(hCarre);
+		if (ptrDevTabSphere[k].isEnDessous(hCarre) &&  ptrDevTabSphere[k].distance(dz) < distanceMin)
 		    {
+		    distanceMin = ptrDevTabSphere[k].distance(dz);
 		    float hue = ptrDevTabSphere[k].hue(t);
 		    float brightness = ptrDevTabSphere[k].brightness(ptrDevTabSphere[k].dz(hCarre));
 		    ColorTools::HSB_TO_RVB(hue, 1.f, brightness, ptrColor);
-		    break;
 		    }
 		}
 	    }

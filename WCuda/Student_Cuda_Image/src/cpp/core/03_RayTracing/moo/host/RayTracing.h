@@ -64,7 +64,7 @@ class RayTracing: public Animable_I<uchar4>
 	Sphere* ptrDevTabSphere;
 
 	// Constants
-	static const int BORD = 200;
+	static const int BORD = 300;
 
     };
 
