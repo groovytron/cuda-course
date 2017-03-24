@@ -52,8 +52,8 @@ int mainImage(Settings& settings)
     ImageOption zoomable(true);
     ImageOption nozoomable(false);
 
-//    Viewer<RipplingProvider> vague(nozoomable, 25, 25); // imageOption px py
-    Viewer<RayTracingProvider> raytracing(nozoomable, 25, 25); // imageOption px py
+    Viewer<RipplingProvider> vague(nozoomable, 25, 25); // imageOption px py
+//    Viewer<RayTracingProvider> raytracing(nozoomable, 25, 25); // imageOption px py
 
     // Common
     GLUTImageViewers::runALL(); // Bloquant, Tant qu'une fenetre est ouverte

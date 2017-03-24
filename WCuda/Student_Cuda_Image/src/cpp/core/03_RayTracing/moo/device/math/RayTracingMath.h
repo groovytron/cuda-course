@@ -1,13 +1,11 @@
 #pragma once
 
-#include <cudaTools.h>
-#include <ColorTools_GPU.h>
 #include <math.h>
+#include "MathTools.h"
+#include "Sphere.h"
+#include <stdio.h>
 
-#include "../../Sphere.h"
-
-class Sphere;
-
+#include "ColorTools_GPU.h"
 using namespace gpu;
 
 /*----------------------------------------------------------------------*\
@@ -18,33 +16,23 @@ using namespace gpu;
  |*		Public			*|
  \*-------------------------------------*/
 
-class RayTracingMath
+class RaytracingMath
     {
-
 	/*--------------------------------------*\
 	|*		Constructor		*|
 	 \*-------------------------------------*/
 
     public:
 
-	__device__ RayTracingMath(int w, int h, Sphere* ptrDevSpheres, int nbSpheres)
+	__device__ RaytracingMath(float t, int nbSphere, Sphere* ptrDevTabSphere)
 	    {
-	    this->dim2 = w / 2;
-	    this->ptrDevSpheres = ptrDevSpheres;
-	    this->nbSpheres = nbSpheres;
-	    if (Indice2D::tid() == 0)
-		{
-		printf("Coucou from device ");
-		printf("nb sphere: %d ", this->nbSpheres);
-		printf("rayon: %f\n", ptrDevSpheres[0].getRayon());
-		}
-
+	    this->t = t;
+	    this->nbSphere = nbSphere;
+	    this->ptrDevTabSphere = ptrDevTabSphere;
 	    }
 
-	// constructeur copie automatique car pas pointeur dans VagueMath
-
 	__device__
-	                                                          virtual ~RayTracingMath()
+	        virtual ~RaytracingMath()
 	    {
 	    // rien
 	    }
@@ -56,50 +44,33 @@ class RayTracingMath
     public:
 
 	__device__
-	void colorIJ(uchar4* ptrColor, int i, int j, float t)
+	void colorIJ(uchar4* ptrColor, float i, float j)
 	    {
-	    uchar levelGris = 128;
+	    ptrColor->x = 0;
+	    ptrColor->y = 0;
+	    ptrColor->z = 0;
+	    ptrColor->w = 255;
 
-	    float hue = f(i, j, t); // update levelGris
-//
-	    ColorTools::HSB_TO_RVB(hue, ptrColor);
-	    levelGris = 0;
-//
-//	    ptrColor->x = levelGris;
-//	    ptrColor->y = levelGris;
-//	    ptrColor->z = levelGris;
+	    f(ptrColor, i, j);
 
-	    ptrColor->w = 255; // opaque
+	    }
+
+	__device__
+	void f(uchar4* ptrColor, float i, float j)
+	    {
+	    float hCarre;
+	    for (uint k = 0; k < nbSphere; k++)
+		{
+		hCarre = ptrDevTabSphere[k].hCarre(i, j);
+		if (ptrDevTabSphere[k].isEnDessous(hCarre))
+		    {
+		    ColorTools::HSB_TO_RVB(ptrDevTabSphere[k].hue(t), 1.f, ptrDevTabSphere[k].brightness(ptrDevTabSphere[k].dz(hCarre)), ptrColor);
+		    break;
+		    }
+		}
 	    }
 
     private:
-
-	__device__
-	float f(int i, int j, float t)
-	    {
-	    //	Calculer h 2
-	    //	Calculer isEndessous
-	    //	Calculer dz
-	    //	Calculer distance
-	    //	Calculer brightnesse
-	    for (int k = 0; k < this->nbSpheres; k++)
-		{
-		Sphere sphere = ptrDevSpheres[k];
-		float hCarre = sphere.hCarre((float) j, (float) i);
-//		float isEndessous = sphere.isEnDessous(hCarre);
-//		float dz = sphere.dz(hCarre);
-//		float distance = sphere.distance(dz);
-//		float hue = 1;
-
-		if (sphere.isEnDessous(hCarre))
-		    {
-		    return 0.5f;
-		    }
-
-		}
-
-	    return 0.25f;
-	    }
 
 	/*--------------------------------------*\
 	|*		Attributs		*|
@@ -108,9 +79,10 @@ class RayTracingMath
     private:
 
 	// Tools
-	float dim2;
-	Sphere* ptrDevSpheres;
-	int nbSpheres;
+	float t;
+	int nbSphere;
+	Sphere* ptrDevTabSphere;
+
     };
 
 /*----------------------------------------------------------------------*\

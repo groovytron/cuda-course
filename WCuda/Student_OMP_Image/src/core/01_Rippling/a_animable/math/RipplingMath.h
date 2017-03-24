@@ -61,14 +61,13 @@ class RipplingMath
 	    // use focntion dij ci-dessous
 	    float dijResult;
 	    dij(i, j, &dijResult);
-	    *ptrlevelGris = 128 + 127  * (cos(dijResult / 10.f - t / 7.f) / (dijResult / 10.f + 1.f));
+	    *ptrlevelGris = 128 + 127 * (cos(dijResult / 10.f - t / 7.f) / (dijResult / 10.f + 1.f));
 	    }
 
 	void dij(int i, int j, float* ptrResult)
 	    {
-	    //TODO cf fonction math pdf
-	    float fi = i - dim2 / 2;
-	    float fj = j - dim2 / 2;
+	    float fi = i - dim2;
+	    float fj = j - dim2;
 	    *ptrResult = sqrt(fi * fi + fj * fj);
 	    }
 

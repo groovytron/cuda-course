@@ -1,1 +1,1 @@
-/home/arc23/CUDA/toStudent/code/WCuda/Student_Cuda_Image/src/cpp/core/03_RayTracing/moo/Sphere.h
+/home/arc23/CUDA/toStudent/code/WCuda/Student_Cuda_Image/src/cpp/core/03_RayTracing/moo/device/math/Sphere.h

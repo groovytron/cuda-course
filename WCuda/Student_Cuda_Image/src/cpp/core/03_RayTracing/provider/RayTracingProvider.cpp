@@ -1,8 +1,10 @@
-#include "RayTracingProvider.h"
 #include "RayTracing.h"
 
 #include "MathTools.h"
 #include "Grid.h"
+#include "RayTracingProvider.h"
+
+
 
 /*----------------------------------------------------------------------*\
  |*			Declaration 					*|
@@ -33,24 +35,24 @@
  */
 Animable_I<uchar4>* RayTracingProvider::createAnimable()
     {
-    const int NB_SPHERE = 1;
+    //animation
+    float dt = 2.f * PI_FLOAT / 1000.f;
 
-    // Animation;
-    float dt = 2 * PI / 10;
+    int nbSphere = 50;
 
     // Dimension
-    int dw = 16 * 60;
+    int dw = 16 * 60 ;
     int dh = 16 * 60;
 
     // Grid Cuda
     int mp = Device::getMPCount();
     int coreMP = Device::getCoreCountMP();
 
-    dim3 dg = dim3(46, 2, 1);  		// disons, a optimiser selon le gpu, peut drastiqument ameliorer ou baisser les performances
-    dim3 db = dim3(448, 2, 1);
-    Grid grid(dg, db);  // TODO definissez une grille cuda (dg, db)
+    dim3 dg = dim3(48, 1, 1);
+    dim3 db = dim3(512, 1,1);
+    Grid grid(dg, db);
 
-    return new RayTracing(grid, dw, dh, dt, NB_SPHERE);
+    return new RayTracing(nbSphere, grid, dw, dh, dt);
     }
 
 /**
@@ -61,6 +63,8 @@ Image_I* RayTracingProvider::createImageGL(void)
     ColorRGB_01 colorTexte(0, 1, 0); // Green
     return new ImageAnimable_RGBA_uchar4(createAnimable(), colorTexte);
     }
+
+
 
 /*--------------------------------------*\
  |*		Private			*|

@@ -4,109 +4,69 @@
 #include "Device.h"
 #include <assert.h>
 #include "RayTracing.h"
-#include "Sphere.h"
-#include "SphereCreator.h"
 
 using std::cout;
 using std::endl;
 
-/*----------------------------------------------------------------------*\
- |*			Declaration 					*|
- \*---------------------------------------------------------------------*/
 
-/*--------------------------------------*\
- |*		Imported	 	*|
- \*-------------------------------------*/
+extern __global__ void rayTracing(uchar4* ptrDevPixels,uint w, uint h,float t,uint nbSphere, Sphere* ptrDevTabSphere);
 
-extern __global__ void raytracing(Sphere* ptrDevSpheres, uchar4* ptrDevPixels, uint w, uint h, float t, int nbSpheres);
 
-/*--------------------------------------*\
- |*		Public			*|
- \*-------------------------------------*/
 
-/*--------------------------------------*\
- |*		Private			*|
- \*-------------------------------------*/
-
-/*----------------------------------------------------------------------*\
- |*			Implementation 					*|
- \*---------------------------------------------------------------------*/
-
-/*--------------------------------------*\
- |*		Public			*|
- \*-------------------------------------*/
-
-/*-------------------------*\
- |*	Constructeur	    *|
- \*-------------------------*/
-
-RayTracing::RayTracing(const Grid& grid, uint w, uint h, float dt, int nbSpheres) :
-	Animable_I<uchar4>(grid, w, h, "Raytracing_Cuda")
+RayTracing::RayTracing(uint nbSphere, const Grid& grid, uint w, uint h, float dt) :
+	Animable_I<uchar4>(grid, w, h, "RayTracing_Cuda_RGBA_uchar4")
     {
-    assert(w == h); // specific rippling
 
     // Inputs
     this->dt = dt;
-    this->sizeOctet = nbSpheres * sizeof(Sphere);
+    this->nbSphere = nbSphere;
+
+    this->sizeOctet = nbSphere * sizeof(Sphere);
+
+    printf("coucou");
+    SphereCreator sphereCreator(nbSphere,w,h,100);
+    Sphere* ptrTabSphere = sphereCreator.getTabSphere();
 
     // Tools
-    this->t = 0; // protected dans Animable
+    this->t = 0;
 
-    this->nbSpheres = nbSpheres;
-    const int BORD = 200;
-    SphereCreator sphereCreator(nbSpheres, w, h, BORD);
-    this->ptrSpheres = sphereCreator.getTabSphere();
+    this->dg = grid.dg;
+    this->db = grid.db;
 
-    printf("Coucou from Host rayon: %f\n", ptrSpheres[0].getRayon());
+    Device::malloc(&ptrDevTabSphere, sizeOctet);
+    Device::memclear(ptrDevTabSphere, sizeOctet);
+    Device::memcpyHToD(ptrDevTabSphere, ptrTabSphere, sizeOctet);
+    //Device::lastCudaError("TabSphere MM (end allocation)"); // temp debug, facultatif
 
-    Device::malloc(&ptrDevSpheres, sizeOctet);
-    Device::memclear(ptrDevSpheres, sizeOctet);
-    Device::memcpyHToD(ptrDevSpheres, ptrSpheres, sizeOctet);
 
     }
 
 RayTracing::~RayTracing()
     {
-    // rien
-    Device::free(ptrDevSpheres);
+    //delete this->ptrTabSphere;
+    Device::free(ptrDevTabSphere);
+    //Device::lastCudaError("TabSphere MM (end deallocation)"); // temp debug, facultatif
     }
 
-/*-------------------------*\
- |*	Methode		    *|
- \*-------------------------*/
 
-/**
- * Override
- * Call periodicly by the API
- *
- * Note : domaineMath pas use car pas zoomable
- */
+
 void RayTracing::process(uchar4* ptrDevPixels, uint w, uint h, const DomaineMath& domaineMath)
     {
-    Device::lastCudaError("rippling rgba uchar4 (before kernel)"); // facultatif, for debug only, remove for release
 
-    // TODO lancer le kernel avec <<<dg,db>>>
-    // le kernel est importer ci-dessus (ligne 19)
+    //Device::lastCudaError("rayTracing (before kernel)"); // facultatif, for debug only, remove for release
+    rayTracing<<<dg,db>>>(ptrDevPixels,w,h,t,nbSphere,ptrDevTabSphere);
+    //Device::lastCudaError("rayTracing (after kernel)"); // facultatif, for debug only, remove for release
 
-    raytracing <<<db, dg>>>(this->ptrDevSpheres, ptrDevPixels, w, h, t, this->nbSpheres);
+    //Device::synchronize();
 
-    Device::lastCudaError("rippling rgba uchar4 (after kernel)"); // facultatif, for debug only, remove for release
+
+
     }
 
-/**
- * Override
- * Call periodicly by the API
- */
+
 void RayTracing::animationStep()
     {
     t += dt;
     }
 
-/*--------------------------------------*\
- |*		Private			*|
- \*-------------------------------------*/
-
-/*----------------------------------------------------------------------*\
- |*			End	 					*|
- \*---------------------------------------------------------------------*/
 
