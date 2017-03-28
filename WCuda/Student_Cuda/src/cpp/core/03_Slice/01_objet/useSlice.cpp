@@ -1,6 +1,6 @@
 #include <iostream>
-#include <stdlib.h>
-
+#include "Grid.h"
+#include "Device.h"
 
 using std::cout;
 using std::endl;
@@ -13,21 +13,17 @@ using std::endl;
  |*		Imported	 	*|
  \*-------------------------------------*/
 
-extern bool useHello(void);
-extern bool useAddVecteur(void);
-extern bool useSlice(void);
+#include "host/Slice.h"
 
 /*--------------------------------------*\
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore();
+bool useSlice(void);
 
 /*--------------------------------------*\
  |*		Private			*|
  \*-------------------------------------*/
-
-
 
 /*----------------------------------------------------------------------*\
  |*			Implementation 					*|
@@ -37,26 +33,46 @@ int mainCore();
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore()
+bool useSlice()
     {
+    cout << "use" << endl;
+    int nbSlice = 9;
     bool isOk = true;
-//    isOk &= useHello();
-//    isOk &=useAddVecteur();
 
-    cout << "coucou" << endl;
-    isOk &=useSlice();
+    // Partie interessante GPGPU
+	{
+	cout << "GPU" << endl;
+	// Grid cuda
+	int mp = Device::getMPCount();
+	int coreMP = Device::getCoreCountMP();
 
-    cout << "\nisOK = " << isOk << endl;
-    cout << "\nEnd : mainCore" << endl;
+	cout << "grid" << endl;
 
-    return isOk ? EXIT_SUCCESS : EXIT_FAILURE;
+	dim3 dg = dim3(64, 1, 1);  		// grid 1D pour simplifier la réduction intrathread
+	dim3 db = dim3(64, 1, 1);   	// bloc 1D pour simplifier la réduction intrathread
+	Grid grid(dg, db);
+
+	cout << "slice" << endl;
+
+	Slice slice(grid, nbSlice);
+
+	cout << "before slice run" << endl;
+
+	slice.run();
+
+	cout << "after slice run" << endl;
+	// TODO: pintf(slice.getResult()) du résultat
+	printf("result %f", slice.getResult());
+	}
+
+	cout << "use end" << endl;
+
+    return isOk;
     }
 
 /*--------------------------------------*\
  |*		Private			*|
  \*-------------------------------------*/
-
-
 
 /*----------------------------------------------------------------------*\
  |*			End	 					*|
