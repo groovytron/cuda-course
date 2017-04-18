@@ -1,5 +1,6 @@
 #include <iostream>
-#include <stdlib.h>
+#include "Grid.h"
+#include "Device.h"
 
 using std::cout;
 using std::endl;
@@ -12,16 +13,13 @@ using std::endl;
  |*		Imported	 	*|
  \*-------------------------------------*/
 
-extern bool useHello(void);
-extern bool useAddVecteur(void);
-extern bool useSlice(void);
-extern bool useMontecarlo(void);
+#include "host/Montecarlo.h"
 
 /*--------------------------------------*\
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore();
+bool useMontecarlo(void);
 
 /*--------------------------------------*\
  |*		Private			*|
@@ -35,18 +33,40 @@ int mainCore();
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore()
+bool useMontecarlo()
     {
+    cout << "use" << endl;
+    int nbFleche = 9;
     bool isOk = true;
-//    isOk &= useHello();
-//    isOk &=useAddVecteur();
-//    isOk &= useSlice();
-    isOk &= useMontecarlo();
 
-    cout << "\nisOK = " << isOk << endl;
-    cout << "\nEnd : mainCore" << endl;
+    // Partie interessante Cuda
+	{
+	cout << "GPU" << endl;
+	// Grid cuda
+	int mp = Device::getMPCount();
+	int coreMP = Device::getCoreCountMP();
 
-    return isOk ? EXIT_SUCCESS : EXIT_FAILURE;
+	cout << "grid" << endl;
+
+	dim3 dg = dim3(2, 1, 1);  		// grid 1D pour simplifier la réduction intrathread
+	dim3 db = dim3(64, 1, 1);   	// bloc 1D pour simplifier la réduction intrathread
+	Grid grid(dg, db);
+
+	cout << "montecarlo" << endl;
+
+	Montecarlo montecarlo(grid, nbFleche);
+
+	cout << "before montecarlo run" << endl;
+
+	montecarlo.run();
+
+	cout << "after slice run" << endl;
+	cout << "result " << montecarlo.getResult() << endl;
+	}
+
+	cout << "use end" << endl;
+
+    return isOk;
     }
 
 /*--------------------------------------*\
