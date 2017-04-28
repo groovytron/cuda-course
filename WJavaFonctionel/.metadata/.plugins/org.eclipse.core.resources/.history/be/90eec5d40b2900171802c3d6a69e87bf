@@ -1,0 +1,63 @@
+
+package ch.arc.cours.lamda.interfacefonctionelle.neu.custom;
+
+import org.junit.Assert;
+
+public class UseCustom
+	{
+
+	/*------------------------------------------------------------------*\
+	|*							Methodes Public							*|
+	\*------------------------------------------------------------------*/
+
+	public static void main(String[] args)
+		{
+		main();
+		}
+
+	public static void main()
+		{
+		useComposition();
+		}
+
+	/*------------------------------------------------------------------*\
+	|*							Methodes Private						*|
+	\*------------------------------------------------------------------*/
+
+	/**
+	 * 
+	 * x -> x*x+1
+	 *
+	 * h(x)=x+1
+	 * g(x)= x*x
+	 * (g o h) (x)= h(g(x))
+	 */
+	private static void useComposition()
+		{
+		Function_I g=new Function_I()
+			{
+			
+			@Override
+			public double f(double x)
+				{
+				return x+1;
+				}
+			};
+		
+			Function_I h=new Function_I()
+				{
+				
+				@Override
+				public double f(double x)
+					{
+					return x*x;
+					}
+				};
+		
+		Function_I u = FunctionTools.composition1(h, g);
+
+		Assert.assertTrue(u.f(2)==2*2+1);
+		System.out.println(u.f(2));
+		}
+
+	}

@@ -1,0 +1,34 @@
+
+package ch.arc.cours.lamda.interfacefonctionelle.neu.custom;
+
+public class UseCustom
+	{
+	
+	/*------------------------------------------------------------------*\
+	|*							Methodes Public							*|
+	\*------------------------------------------------------------------*/
+	
+	public static void main(String[] args)
+		{
+		main();
+		}
+		
+	public static void main()
+		{
+		useComposition();
+		}
+		
+	/*------------------------------------------------------------------*\
+	|*							Methodes Private						*|
+	\*------------------------------------------------------------------*/
+	
+	/**
+	 * x -> x*x+1
+	 */
+	private static void useComposition()
+		{
+		// TODO Auto-generated method stub
+		
+		}
+		
+	}

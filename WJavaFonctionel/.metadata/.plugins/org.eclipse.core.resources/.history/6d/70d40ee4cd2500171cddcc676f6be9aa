@@ -1,0 +1,25 @@
+
+package ch.arc.cours.lamda.interfacefonctionelle.neu.predicate;
+
+public class UsePredicate
+	{
+
+	/*------------------------------------------------------------------*\
+	|*							Methodes Public							*|
+	\*------------------------------------------------------------------*/
+
+	public static void main(String[] args)
+		{
+		main();
+		}
+
+	public static void main()
+		{
+
+		}
+
+	/*------------------------------------------------------------------*\
+	|*							Methodes Private						*|
+	\*------------------------------------------------------------------*/
+
+	}
