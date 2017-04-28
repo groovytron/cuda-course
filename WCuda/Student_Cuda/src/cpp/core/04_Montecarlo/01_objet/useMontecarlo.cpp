@@ -1,5 +1,7 @@
 #include <iostream>
-#include <stdlib.h>
+#include <stdio.h>
+#include "Grid.h"
+#include "Device.h"
 
 using std::cout;
 using std::endl;
@@ -12,18 +14,13 @@ using std::endl;
  |*		Imported	 	*|
  \*-------------------------------------*/
 
-extern bool useHello(void);
-extern bool useAddVecteur(void);
-extern bool useSlice(void);
-extern bool useMontecarlo(void);
-extern bool useMontecarloMultiGPU(void);
-extern bool useHistogramme(void);
+#include "host/MonteCarlo.h"
 
 /*--------------------------------------*\
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore();
+bool useMontecarlo(void);
 
 /*--------------------------------------*\
  |*		Private			*|
@@ -37,20 +34,26 @@ int mainCore();
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore()
+bool useMontecarlo()
     {
+
     bool isOk = true;
-//    isOk &= useHello();
-//    isOk &= useAddVecteur();
-//    isOk &= useSlice();
-//    isOk &= useMontecarlo();
-//    isOk &= useMontecarloMultiGPU();
-    isOk &= useHistogramme();
 
-    cout << "\nisOK = " << isOk << endl;
-    cout << "\nEnd : mainCore" << endl;
+    int nbFleches = INT_MAX;
+    float m = 20;
+    float result;
+    int mp = Device::getMPCount();
 
-    return isOk ? EXIT_SUCCESS : EXIT_FAILURE;
+    dim3 dg = dim3(512, 1, 1);
+    dim3 db = dim3(512, 1, 1);
+
+    Grid grid(dg, db);
+
+    MonteCarlo mc(grid, nbFleches, m);
+    mc.run();
+    result = mc.getResult();
+    printf("result : %f", result);
+    return isOk;
     }
 
 /*--------------------------------------*\

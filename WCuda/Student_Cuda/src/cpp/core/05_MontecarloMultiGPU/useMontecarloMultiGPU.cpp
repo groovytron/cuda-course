@@ -1,5 +1,8 @@
 #include <iostream>
-#include <stdlib.h>
+#include <stdio.h>
+#include "Grid.h"
+#include "Device.h"
+#include "Chrono.h"
 
 using std::cout;
 using std::endl;
@@ -12,18 +15,13 @@ using std::endl;
  |*		Imported	 	*|
  \*-------------------------------------*/
 
-extern bool useHello(void);
-extern bool useAddVecteur(void);
-extern bool useSlice(void);
-extern bool useMontecarlo(void);
-extern bool useMontecarloMultiGPU(void);
-extern bool useHistogramme(void);
+#include "host/MontecarloMultiGPU.h"
 
 /*--------------------------------------*\
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore();
+bool useMontecarloMultiGPU(void);
 
 /*--------------------------------------*\
  |*		Private			*|
@@ -37,20 +35,26 @@ int mainCore();
  |*		Public			*|
  \*-------------------------------------*/
 
-int mainCore()
+bool useMontecarloMultiGPU()
     {
+
     bool isOk = true;
-//    isOk &= useHello();
-//    isOk &= useAddVecteur();
-//    isOk &= useSlice();
-//    isOk &= useMontecarlo();
-//    isOk &= useMontecarloMultiGPU();
-    isOk &= useHistogramme();
 
-    cout << "\nisOK = " << isOk << endl;
-    cout << "\nEnd : mainCore" << endl;
+    int nbFleches = INT_MAX;
+    float m = 20;
 
-    return isOk ? EXIT_SUCCESS : EXIT_FAILURE;
+    dim3 dg = dim3(512, 1, 1);
+    dim3 db = dim3(1024, 1, 1);
+
+    Grid grid(dg, db);
+
+    MontecarloMultiGPU mc(grid, nbFleches, m);
+    Chrono c;
+    mc.run();
+    double time = c.stop();
+    float reslut = mc.getResult();
+    cout << "Result : " << reslut << "  Time : " << time;
+    return isOk;
     }
 
 /*--------------------------------------*\
