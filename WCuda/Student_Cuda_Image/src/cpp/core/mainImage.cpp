@@ -8,7 +8,7 @@
 
 #include "01_Rippling/02_provider/RipplingProvider.h"
 #include "02_Mandelbrot_Julia/provider/MandelbrotProvider.h"
-#include "03_RayTracing/provider/RayTracingProvider.h"
+#include "03_RayTracing_CM_SM/provider/RayTracingProvider.h"
 
 using namespace gpu;
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "Grid.h"
 #include "Device.h"
 
@@ -36,7 +37,7 @@ bool useSlice(void);
 bool useSlice()
     {
     cout << "use" << endl;
-    int nbSlice = 9;
+    int nbSlice = 10000;
     bool isOk = true;
 
     // Partie interessante GPGPU
@@ -48,8 +49,8 @@ bool useSlice()
 
 	cout << "grid" << endl;
 
-	dim3 dg = dim3(64, 1, 1);  		// grid 1D pour simplifier la réduction intrathread
-	dim3 db = dim3(64, 1, 1);   	// bloc 1D pour simplifier la réduction intrathread
+	dim3 dg = dim3(512, 1, 1);  		// grid 1D pour simplifier la réduction intrathread
+	dim3 db = dim3(512, 1, 1);   	// bloc 1D pour simplifier la réduction intrathread
 	Grid grid(dg, db);
 
 	cout << "slice" << endl;
@@ -65,7 +66,7 @@ bool useSlice()
 	printf("result %f", slice.getResult());
 	}
 
-	cout << "use end" << endl;
+    cout << "use end" << endl;
 
     return isOk;
     }
