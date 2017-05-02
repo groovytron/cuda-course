@@ -11,33 +11,42 @@ public class FunctionCompose
 	\*------------------------------------------------------------------*/
 
 	/**
-	 * (h 0 g)(x) = g(h(x))
+	 * (h 0 g)(x) = h(g(x))
 	 *
 	 * classe interne anonyme
 	 */
 	public static Function_I composition1(Function_I h, Function_I g)
 		{
-		// TODO
+		return new Function_I()
+			{
+
+			@Override
+			public double value(double x)
+				{
+				return h.value(g.value(x));
+				}
+			};
 		}
 
 	/**
-	 * (h 0 g)(x) = g(h(x))
+	 * (h 0 g)(x) = h(g(x))
 	 *
 	 * lamda dans variable
 	 */
 	public static Function_I composition2(Function_I h, Function_I g)
 		{
-		// TODO
+		Function_I function = x -> h.value(g.value(x));
+		return function;
 		}
 
 	/**
-	 * (h 0 g)(x) = g(h(x))
+	 * (h 0 g)(x) = h(g(x))
 	 *
 	 * lamda
 	 */
 	public static Function_I composition3(Function_I h, Function_I g)
 		{
-		// TODO
+		return x -> h.value(g.value(x));
 		}
 
 	/*------------------------------------------------------------------*\

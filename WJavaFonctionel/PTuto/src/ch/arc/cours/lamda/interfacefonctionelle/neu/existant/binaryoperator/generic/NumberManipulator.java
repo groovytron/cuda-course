@@ -18,7 +18,7 @@ public class NumberManipulator
 		int value = initValue;
 		for(int element:tab)
 			{
-			// TODO
+			value = operator.apply(value, element);
 			}
 
 		return value;

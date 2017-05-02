@@ -17,7 +17,15 @@ public class FunctionAdd
 	 */
 	public static Function_I add1(Function_I h, Function_I g)
 		{
-		// TODO
+		return new Function_I()
+			{
+
+			@Override
+			public double value(double x)
+				{
+				return h.value(x) + g.value(x);
+				}
+			};
 		}
 
 	/**
@@ -27,7 +35,8 @@ public class FunctionAdd
 	 */
 	public static Function_I add2(Function_I h, Function_I g)
 		{
-		// TODO
+		Function_I function = x -> h.value(x) + g.value(x);
+		return function;
 		}
 
 	/**
@@ -37,7 +46,7 @@ public class FunctionAdd
 	 */
 	public static Function_I add3(Function_I h, Function_I g)
 		{
-		// TODO
+		return x -> h.value(x) + g.value(x);
 		}
 
 	/*------------------------------------------------------------------*\

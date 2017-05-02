@@ -42,8 +42,7 @@ public class UseRunnable
 		Runnable runnable = new Runnable()
 			{
 
-			@Override
-			public void run()
+			@Override public void run()
 				{
 				System.out.println("Hello2");
 				}
@@ -58,8 +57,7 @@ public class UseRunnable
 		Thread thread = new Thread(new Runnable()
 			{
 
-			@Override
-			public void run()
+			@Override public void run()
 				{
 				System.out.println("Hello3");
 				}
@@ -74,15 +72,7 @@ public class UseRunnable
 	 */
 	private static void version4()
 		{
-		new Thread(new Runnable()
-			{
-
-			@Override
-			public void run()
-				{
-				System.out.println("Hello4");
-				}
-			}).start();
+		// TODO
 		}
 
 	/*------------------------------*\
@@ -94,10 +84,7 @@ public class UseRunnable
 	 */
 	private static void version5()
 		{
-		new Thread(() ->
-			{
-			System.out.println("Hello5");
-			}).start();
+		// TODO
 		}
 
 	/**
@@ -105,11 +92,7 @@ public class UseRunnable
 	 */
 	private static void version5Bis()
 		{
-		Runnable runnable = () ->
-			{
-			System.out.println("Hello5bis");
-			};
-		new Thread(runnable).start();
+		// TODO
 		}
 
 	/**
@@ -117,7 +100,7 @@ public class UseRunnable
 	 */
 	private static void version6()
 		{
-		new Thread(() -> System.out.println("Hello6")).start();
+		// TODO
 		}
 
 	/**
@@ -125,8 +108,7 @@ public class UseRunnable
 	 */
 	private static void version6Bis()
 		{
-		Runnable runnable = () -> System.out.println("Hello6bis");
-		new Thread(runnable).start();
+		// TODO
 		}
 
 	/*------------------------------------------------------------------*\

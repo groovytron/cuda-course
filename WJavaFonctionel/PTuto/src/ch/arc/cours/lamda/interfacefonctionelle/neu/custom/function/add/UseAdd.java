@@ -45,7 +45,25 @@ public class UseAdd
 	 */
 	private static void useAdd1()
 		{
-		// TODO
+		Function_I h = new Function_I()
+			{
+
+			@Override
+			public double value(double x)
+				{
+				return 2 * x;
+				}
+			};
+
+		Function_I g = new Function_I()
+			{
+
+			@Override
+			public double value(double x)
+				{
+				return x + 1;
+				}
+			};
 
 		Function_I u1 = FunctionAdd.add1(h, g);
 		Function_I u2 = FunctionAdd.add2(h, g);
@@ -65,7 +83,8 @@ public class UseAdd
 	 */
 	private static void useAdd2()
 		{
-		// TODO
+		Function_I h = x -> 2 * x;
+		Function_I g = x -> x + 1;
 
 		Function_I u1 = FunctionAdd.add1(h, g);
 		Function_I u2 = FunctionAdd.add2(h, g);
@@ -79,13 +98,15 @@ public class UseAdd
 	 *
 	 * h(x)= 2*x
 	 * g(x)= x+1
-	 * (g + h) (x)= h(x)+g(x)
+	 * (g + h) (x) = h(x)+g(x)
 	 *
 	 * lamda
 	 */
 	private static void useAdd3()
 		{
-		// TODO
+		Function_I u1 = FunctionAdd.add1(x -> 2 * x, x -> x + 1);
+		Function_I u2 = FunctionAdd.add2(x -> 2 * x, x -> x + 1);
+		Function_I u3 = FunctionAdd.add3(x -> 2 * x, x -> x + 1);
 
 		check(u1, u2, u3);
 		}

@@ -2,6 +2,7 @@
 package ch.arc.cours.lamda.interfacefonctionelle.neu.existant.binaryoperator.integer;
 
 import java.util.Arrays;
+import java.util.function.IntBinaryOperator;
 
 import org.junit.Assert;
 
@@ -58,7 +59,16 @@ public class UseReduceProduit
 	 */
 	private static int version1(int[] tab)
 		{
-		// TODO
+		IntBinaryOperator operator = new IntBinaryOperator()
+			{
+
+			@Override
+			public int applyAsInt(int x, int y)
+				{
+				return x * y;
+				}
+			};
+		return NumberManipulatorInteger.reduce(tab, operator, 1);
 		}
 
 	/**
@@ -66,7 +76,8 @@ public class UseReduceProduit
 	 */
 	private static int version2(int[] tab)
 		{
-		// TODO
+		IntBinaryOperator operator = (x, y) -> x * y;
+		return NumberManipulatorInteger.reduce(tab, operator, 1);
 		}
 
 	/**
@@ -74,7 +85,7 @@ public class UseReduceProduit
 	 */
 	private static int version3(int[] tab)
 		{
-		// TODO
+		return NumberManipulatorInteger.reduce(tab, (x, y) -> x * y, 1);
 		}
 
 	}

@@ -2,6 +2,8 @@
 package ch.arc.cours.lamda.interfacefonctionelle.neu.existant.function;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 import org.junit.Assert;
 
@@ -26,7 +28,6 @@ public class UseFunctionMapReduce
 
 		mapReduce();
 		}
-
 
 	/*------------------------------------------------------------------*\
 	|*							Methodes Private						*|
@@ -55,7 +56,27 @@ public class UseFunctionMapReduce
 	 */
 	private static int version1(List<Maison> list)
 		{
-		// TODO
+		BinaryOperator<Integer> operator = new BinaryOperator<Integer>()
+			{
+
+			@Override
+			public Integer apply(Integer x, Integer y)
+				{
+				return x + y;
+				}
+			};
+
+		Function<Maison, Integer> function = new Function<Maison, Integer>()
+			{
+
+			@Override
+			public Integer apply(Maison maison)
+				{
+				return maison.getPrix();
+				}
+			};
+
+		return MaisonManipulator.mapReduce(list, function, operator, 0);
 		}
 
 	/*------------------------------*\
@@ -69,7 +90,9 @@ public class UseFunctionMapReduce
 	 */
 	private static int version2(List<Maison> list)
 		{
-		// TODO
+		BinaryOperator<Integer> operator = (x, y) -> x + y;
+		Function<Maison, Integer> function = maison -> maison.getPrix();
+		return MaisonManipulator.mapReduce(list, function, operator, 0);
 		}
 
 	/**
@@ -79,7 +102,7 @@ public class UseFunctionMapReduce
 	 */
 	private static int version3(List<Maison> list)
 		{
-		// TODO
+		return MaisonManipulator.mapReduce(list, maison -> maison.getPrix(), (x, y) -> x + y, 0);
 		}
 
 	/*------------------------------*\

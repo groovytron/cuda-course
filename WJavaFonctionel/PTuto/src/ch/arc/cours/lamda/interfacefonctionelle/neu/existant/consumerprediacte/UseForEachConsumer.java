@@ -1,6 +1,8 @@
 
 package ch.arc.cours.lamda.interfacefonctionelle.neu.existant.consumerprediacte;
 
+import java.util.function.Consumer;
+
 import ch.arc.cours.lamda.interfacefonctionelle.neu.existant.consumerprediacte.tools.Homme;
 import ch.arc.cours.lamda.interfacefonctionelle.neu.existant.consumerprediacte.tools.HommeTools;
 
@@ -46,7 +48,18 @@ public class UseForEachConsumer
 
 		System.out.println("Before : " + iterable);
 
-		// TODO
+		Consumer<Homme> consumer = new Consumer<Homme>()
+			{
+
+			@Override
+			public void accept(Homme homme)
+				{
+				//				System.out.println(homme.getHauteur());
+				homme.opposePoids();
+				}
+			};
+
+		HommeManipulator.foreach(iterable, consumer);
 
 		System.out.println("After  : " + iterable);
 		}
@@ -62,7 +75,9 @@ public class UseForEachConsumer
 		{
 		Iterable<Homme> iterable = HommeTools.create(n);
 
-		// TODO
+		Consumer<Homme> consumer = homme -> homme.opposePoids();
+
+		HommeManipulator.foreach(iterable, consumer);
 
 		System.out.println("After  : " + iterable);
 		}
@@ -74,7 +89,7 @@ public class UseForEachConsumer
 		{
 		Iterable<Homme> iterable = HommeTools.create(n);
 
-		// TODO
+		HommeManipulator.foreach(iterable, homme -> homme.opposePoids());
 
 		System.out.println("After  : " + iterable);
 		}

@@ -23,7 +23,8 @@ public class MaisonManipulator
 		int value = initValue;
 		for(Maison maison:list)
 			{
-			// TODO
+			int attribut = function.apply(maison);
+			value = operator.apply(value, attribut);
 			}
 
 		return value;
@@ -39,7 +40,8 @@ public class MaisonManipulator
 			{
 			if (predicate.test(maison))
 				{
-				// TODO
+				int attribut = function.apply(maison);
+				value = operator.apply(value, attribut);
 				}
 			}
 

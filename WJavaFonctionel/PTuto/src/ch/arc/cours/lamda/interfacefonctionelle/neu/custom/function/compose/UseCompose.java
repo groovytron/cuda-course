@@ -35,13 +35,31 @@ public class UseCompose
 	 *
 	 * h(x)= x+1
 	 * g(x)= x*x
-	 * (g o h) (x)= h(g(x))
+	 * (g o h) (x)= g(h(x))
 	 *
 	 * Classe interne anonyme
 	 */
 	private static void useComposition1()
 		{
-		// TODO
+		Function_I h = new Function_I()
+			{
+
+			@Override
+			public double value(double x)
+				{
+				return x + 1;
+				}
+			};
+
+		Function_I g = new Function_I()
+			{
+
+			@Override
+			public double value(double x)
+				{
+				return x * x;
+				}
+			};
 
 		Function_I u1 = FunctionCompose.composition1(h, g);
 		Function_I u2 = FunctionCompose.composition2(h, g);
@@ -55,13 +73,14 @@ public class UseCompose
 	 *
 	 * h(x)= x+1
 	 * g(x)= x*x
-	 * (g o h) (x)= h(g(x))
+	 * (g o h) (x)= g(h(x))
 	 *
-	 * lamda dans variable
+	 * lambda dans variable
 	 */
 	private static void useComposition2()
 		{
-		// TODO
+		Function_I h = x -> x + 1;
+		Function_I g = x -> x * x;
 
 		Function_I u1 = FunctionCompose.composition1(h, g);
 		Function_I u2 = FunctionCompose.composition2(h, g);
@@ -77,11 +96,13 @@ public class UseCompose
 	 * g(x)= x*x
 	 * (g o h) (x)= h(g(x))
 	 *
-	 * lamda
+	 * lambda
 	 */
 	private static void useComposition3()
 		{
-		// TODO
+		Function_I u1 = FunctionCompose.composition1(x -> x + 1, x -> x * x);
+		Function_I u2 = FunctionCompose.composition2(x -> x + 1, x -> x * x);
+		Function_I u3 = FunctionCompose.composition3(x -> x + 1, x -> x * x);
 
 		check(u1, u2, u3);
 		}

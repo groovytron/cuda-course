@@ -1,6 +1,9 @@
 
 package ch.arc.cours.lamda.interfacefonctionelle.neu.existant.consumerprediacte;
 
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 import ch.arc.cours.lamda.interfacefonctionelle.neu.existant.consumerprediacte.tools.Homme;
 import ch.arc.cours.lamda.interfacefonctionelle.neu.existant.consumerprediacte.tools.HommeTools;
 
@@ -44,7 +47,27 @@ public class UseConsumerPredicate
 		{
 		Iterable<Homme> iterable = HommeTools.create(n);
 
-		// TODO
+		Predicate<Homme> predicate = new Predicate<Homme>()
+			{
+
+			@Override
+			public boolean test(Homme homme)
+				{
+				return homme.getHauteur() > 25;
+				}
+			};
+
+		Consumer<Homme> consumer = new Consumer<Homme>()
+			{
+
+			@Override
+			public void accept(Homme homme)
+				{
+				homme.opposePoids();
+				}
+			};
+
+		HommeManipulator.filterForeach(iterable, predicate, consumer);
 
 		System.out.println(iterable);
 		}
@@ -60,7 +83,10 @@ public class UseConsumerPredicate
 		{
 		Iterable<Homme> iterable = HommeTools.create(n);
 
-		// TODO
+		Predicate<Homme> predicate = homme -> homme.getHauteur() > 25;
+		Consumer<Homme> consumer = homme -> homme.opposePoids();
+
+		HommeManipulator.filterForeach(iterable, predicate, consumer);
 
 		System.out.println(iterable);
 		}
@@ -72,7 +98,7 @@ public class UseConsumerPredicate
 		{
 		Iterable<Homme> iterable = HommeTools.create(n);
 
-		// TODO
+		HommeManipulator.filterForeach(iterable, homme -> homme.getHauteur() > 25, homme -> homme.opposePoids());
 
 		System.out.println(iterable);
 		}

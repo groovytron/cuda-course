@@ -2,6 +2,9 @@
 package ch.arc.cours.lamda.interfacefonctionelle.neu.existant.function;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.junit.Assert;
 
@@ -26,7 +29,6 @@ public class UseFunctionFilterMapReduce
 
 		filterMapReduce();
 		}
-
 
 	/*------------------------------------------------------------------*\
 	|*							Methodes Private						*|
@@ -55,7 +57,37 @@ public class UseFunctionFilterMapReduce
 	 */
 	private static int version1(List<Maison> list)
 		{
-		// TODO
+		Predicate<Maison> predicate = new Predicate<Maison>()
+			{
+
+			@Override
+			public boolean test(Maison maison)
+				{
+				return maison.getNbPiece() > 20;
+				}
+			};
+
+		Function<Maison, Integer> function = new Function<Maison, Integer>()
+			{
+
+			@Override
+			public Integer apply(Maison maison)
+				{
+				return maison.getPrix();
+				}
+			};
+
+		BinaryOperator<Integer> operator = new BinaryOperator<Integer>()
+			{
+
+			@Override
+			public Integer apply(Integer x, Integer y)
+				{
+				return x + y;
+				}
+			};
+
+		return MaisonManipulator.filterMapReduce(list, predicate, function, operator, 0);
 		}
 
 	/*------------------------------*\
@@ -69,7 +101,10 @@ public class UseFunctionFilterMapReduce
 	 */
 	private static int version2(List<Maison> list)
 		{
-		// TODO
+		Predicate<Maison> predicate = maison -> maison.getNbPiece() > 20;
+		Function<Maison, Integer> function = maison -> maison.getPrix();
+		BinaryOperator<Integer> operator = (x, y) -> x + y;
+		return MaisonManipulator.filterMapReduce(list, predicate, function, operator, 0);
 		}
 
 	/**
@@ -79,7 +114,7 @@ public class UseFunctionFilterMapReduce
 	 */
 	private static int version3(List<Maison> list)
 		{
-		// TODO
+		return MaisonManipulator.filterMapReduce(list, m -> m.getNbPiece() > 20, m -> m.getPrix(), (x, y) -> x + y, 0);
 		}
 
 	/*------------------------------*\

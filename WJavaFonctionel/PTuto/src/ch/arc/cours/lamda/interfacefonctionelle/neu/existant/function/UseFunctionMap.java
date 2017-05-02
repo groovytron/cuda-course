@@ -42,8 +42,7 @@ public class UseFunctionMap
 
 	private static void mapPrint(Maison maison, Function<Maison, Integer> function)
 		{
-		// TODO
-
+		int attribut = function.apply(maison);
 		System.out.println(attribut);
 		}
 
@@ -55,33 +54,43 @@ public class UseFunctionMap
 		{
 		// version : classe interne anonyme
 			{
-			// TODO
+			Function<Maison, Integer> function = new Function<Maison, Integer>()
+				{
+
+				@Override
+				public Integer apply(Maison maison)
+					{
+					return maison.getSurface();
+					}
+				};
+			mapPrint(maison, function);
 			}
 
-		// Version : lamda dans variable
+		// Version : lambda dans variable
 			{
-			// TODO
+			Function<Maison, Integer> function = casa -> casa.getSurface();
+			mapPrint(maison, function);
 			}
 
-		// Version : lamda
+		// Version : lambda
 			{
-			// TODO
+			mapPrint(maison, casa -> casa.getSurface());
 			}
 		}
 
 	private static void printPiece(Maison maison)
 		{
-		// Version : lamda
+		// Version : lambda
 			{
-			// TODO
+			mapPrint(maison, casa -> casa.getNbPiece());
 			}
 		}
 
 	private static void printPrix(Maison maison)
 		{
-		// Version : lamda
+		// Version : lambda
 			{
-			// TODO
+			mapPrint(maison, casa -> casa.getPrix());
 			}
 		}
 

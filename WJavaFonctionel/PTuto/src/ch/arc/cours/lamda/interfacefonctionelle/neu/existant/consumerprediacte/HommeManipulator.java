@@ -24,7 +24,10 @@ public class HommeManipulator
 
 		for(Homme homme:iterable)
 			{
-			// TODO
+			if (predicate.test(homme))
+				{
+				list.add(homme);
+				}
 			}
 
 		return list;
@@ -39,9 +42,8 @@ public class HommeManipulator
 		{
 		for(Homme homme:iterable)
 			{
-			// TODO
+			consumer.accept(homme);
 			}
-
 		}
 
 	/**
@@ -53,7 +55,10 @@ public class HommeManipulator
 		{
 		for(Homme homme:iterable)
 			{
-			// TODO
+			if (predicate.test(homme))
+				{
+				consumer.accept(homme);
+				}
 			}
 		}
 

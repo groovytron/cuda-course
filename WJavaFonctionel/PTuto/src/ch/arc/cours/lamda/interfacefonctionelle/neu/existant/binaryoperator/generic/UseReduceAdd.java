@@ -2,6 +2,7 @@
 package ch.arc.cours.lamda.interfacefonctionelle.neu.existant.binaryoperator.generic;
 
 import java.util.Arrays;
+import java.util.function.BinaryOperator;
 
 import org.junit.Assert;
 
@@ -57,7 +58,17 @@ public class UseReduceAdd
 	 */
 	private static int version1(int[] tab)
 		{
-		// TODO
+		BinaryOperator<Integer> operator = new BinaryOperator<Integer>()
+			{
+
+			@Override
+			public Integer apply(Integer n1, Integer n2)
+				{
+				return n1 + n2;
+				}
+			};
+
+		return NumberManipulator.reduce(tab, operator, 0);
 		}
 
 	/**
@@ -65,7 +76,8 @@ public class UseReduceAdd
 	 */
 	private static int version2(int[] tab)
 		{
-		// TODO
+		BinaryOperator<Integer> operator = (n1, n2) -> n1 + n2;
+		return NumberManipulator.reduce(tab, operator, 0);
 		}
 
 	/**
@@ -73,7 +85,7 @@ public class UseReduceAdd
 	 */
 	private static int version3(int[] tab)
 		{
-		// TODO
+		return NumberManipulator.reduce(tab, (n1, n2) -> n1 + n2, 0);
 		}
 
 	}
